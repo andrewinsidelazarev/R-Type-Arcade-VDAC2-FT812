@@ -19,10 +19,10 @@ ROOT = Path(__file__).resolve().parents[2]
 UNREAL = Path('E:/zx/unreal_x64')
 SD = ROOT / 'Build' / '_SD' / 'R-Type VDAC2'
 VERSION, DATE = sys.argv[1], sys.argv[2]
-NAME = f'R-Type VDAC2+ {VERSION}'
+NAME = f'R-Type VDAC2 {VERSION}'                 # публичное имя — без «+» (решение пользователя)
 STAGE = ROOT / 'Build' / 'Package' / NAME
 ZIP = ROOT / f'{NAME}.zip'
-CARD_FILES = ('rtype_vdac2.spg', 'RTYPECOD.PAC', 'RTYPELVL.PAC')
+CARD_FILES = ('rtype_vdac2.spg', 'RTYPECOD.PAC', 'RTYPELVL.PAC', 'README.TXT')   # README.TXT — управление и звук (cp1251)
 sys.stdout.reconfigure(encoding='utf-8')
 
 (STAGE / 'Emulator' / 'rom').mkdir(parents=True, exist_ok=True)   # набор файлов постоянный — перезапись на месте
@@ -52,7 +52,7 @@ for name in CARD_FILES:
     b'@echo off\r\ncd /d "%~dp0Emulator"\r\nstart "" Unreal_tsfm.exe -i Unreal_tsfm.ini rtype_vdac2.spg\r\n')
 
 sums = {name: hashlib.sha256((SD / name).read_bytes()).hexdigest() for name in CARD_FILES}
-title = f'R-Type VDAC2+ {VERSION} ({DATE})'
+title = f'R-Type VDAC2 {VERSION} ({DATE})'
 readme = f"""{title}
 {'=' * len(title)}
 
@@ -79,8 +79,9 @@ TurboSound FM и General Sound) с образом SD-карты, на котор
 -------------------
 
 Нужны ZX Evolution с TS-Config, VDAC2 (FT812), монитор с режимом 1024x768 и SD-карта FAT32.
-Скопировать три файла из папки "SD card" на карту (удобно в одну папку) и запустить
-rtype_vdac2.spg. Загрузчик находит паки на карте по имени и размеру.
+Скопировать содержимое папки "SD card" на карту (удобно в одну папку) и запустить
+rtype_vdac2.spg. Загрузчик находит паки на карте по имени и размеру. README.TXT в той же
+папке — управление и звук (кодировка cp1251).
 
   rtype_vdac2.spg  SHA-256 {sums['rtype_vdac2.spg']}
   RTYPECOD.PAC     SHA-256 {sums['RTYPECOD.PAC']}

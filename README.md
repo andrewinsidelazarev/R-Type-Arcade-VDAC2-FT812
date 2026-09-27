@@ -1,6 +1,6 @@
-# R-Type VDAC2+
+# R-Type VDAC2
 
-![R-Type VDAC2+ — экран загрузки](Assets/Screenshots/00-loading.png)
+![R-Type VDAC2 — экран загрузки](Assets/Screenshots/00-loading.png)
 
 Порт **аркадного [R-Type](https://ru.wikipedia.org/wiki/R-Type) ([Irem M72](https://adb.arcadeitalia.net/dettaglio_mame.php?game_name=rtype), набор World)** на ZX Evolution с прошивкой TS-Config и
 видеоадаптером VDAC2 ([FT812](https://brtchip.com/product/ft812/)). Игра однопользовательская и совпадает с оригиналом покадрово: при разработке
@@ -81,14 +81,14 @@
 звук), экран загрузки, SPG и `RTYPECOD.PAC`, образ SD `Build/V30Z80/rtype_sd.img`. Файлы для карты копируются в
 `Build/_SD/R-Type VDAC2/`. Пак уровней `RTYPELVL.PAC` собирает `Source/Tools/rtype_data.py`.
 Архив для раздачи — эмулятор с образом SD и файлы для карты: `Source/Tools/vdac2p_package.py v022 27.09.2026`
-(архив `R-Type VDAC2+ v022.zip` складывается в корень проекта и не публикуется).
+(архив `R-Type VDAC2 v022.zip` складывается в корень проекта и не публикуется).
 
 Нужны:
 - Python — зависимости в `E:\zx\R-Type VDAC2\Build\PythonDeps`, только на чтение;
 - sjasmplus и spgbld — `E:\zx\z80\tsconf_project\exe`;
 - SDCC — `E:\zx\sdcc`.
 
-`build.cmd` — прежний конвейер VDAC2 (от проверки ROM до ассетов); пересборка VDAC2+ его не вызывает, готовые
+`build.cmd` — прежний конвейер VDAC2 (от проверки ROM до ассетов); пересборка порта его не вызывает, готовые
 ассеты уже лежат в `Assets/Converted` и `Audio/Converted`.
 
 ## Проверка

@@ -21,7 +21,7 @@
 /Arcade/
 
 # Архивы для раздачи с эмулятором (vdac2p_package.py) не публикуются
-/R-Type VDAC2+ *.zip
+/R-Type VDAC2*.zip
 
 # Кэши Python
 __pycache__/
