@@ -2,9 +2,9 @@
 
 ![R-Type VDAC2+ — экран загрузки](Assets/Screenshots/00-loading.png)
 
-Порт **аркадного R-Type (Irem M72, набор World)** на ZX Evolution с прошивкой TS-Config и видеоадаптером
-VDAC2 (FT812). Игра однопользовательская и совпадает с оригиналом покадрово: при разработке рабочее ОЗУ игры
-каждый кадр сверяется с эталоном — ROM автомата на эмуляторе V30 — байт в байт. Графика, данные и поведение
+Порт **аркадного [R-Type](https://ru.wikipedia.org/wiki/R-Type) ([Irem M72](https://adb.arcadeitalia.net/dettaglio_mame.php?game_name=rtype), набор World)** на ZX Evolution с прошивкой TS-Config и
+видеоадаптером VDAC2 ([FT812](https://brtchip.com/product/ft812/)). Игра однопользовательская и совпадает с оригиналом покадрово: при разработке
+рабочее ОЗУ игры каждый кадр сверяется с эталоном — ROM автомата на эмуляторе [NEC V30](https://ru.wikipedia.org/wiki/NEC_V20) — байт в байт. Графика, данные и поведение
 берутся только из ROM-дампа автомата и поведения оригинала в MAME.
 
 **Версия 1.0** (27.09.2026, опорная v022). Готовые файлы для SD-карты — в [релизе 1.0](https://github.com/andrewinsidelazarev/R-Type-Arcade-VDAC2-FT812/releases/tag/v1.0).
@@ -53,15 +53,16 @@ VDAC2 (FT812). Игра однопользовательская и совпад
 
 ## Звук
 
-Мелодии — на TurboSound FM (два YM2203): потоки переложены с YM2151 автомата. Эффекты — на General Sound:
-PCM записан с оригинала в MAME; в отличие от автомата, эффекты не вытесняют друг друга по приоритету. Без платы
-GS эффекты идут на простой AY, а мелодии не звучат.
+Мелодии — на TurboSound FM (два [YM2203](https://ru.wikipedia.org/wiki/Yamaha_YM2203)): потоки переложены с [YM2151](https://ru.wikipedia.org/wiki/Yamaha_YM2151)
+автомата. Эффекты — на [General Sound](https://ru.wikipedia.org/wiki/General_Sound): PCM записан с оригинала в MAME; в отличие от автомата,
+эффекты не вытесняют друг друга по приоритету. Без платы GS эффекты идут на простой [AY](https://ru.wikipedia.org/wiki/AY-3-8910), а мелодии
+не звучат.
 
 ## Как устроен порт
 
 - **Состояние игры** — рабочее ОЗУ ROM (16 КБ) в исходной раскладке. Это договор о данных: благодаря ему каждый
   кадр сверяется с эталоном целиком.
-- **Код.** Процедуры ROM переписаны на Z80 вручную (журнал — `Docs/NATIVE_LEDGER.md`). То, что ещё не переписано,
+- **Код.** Процедуры ROM переписаны на [Z80](https://ru.wikipedia.org/wiki/Zilog_Z80) вручную (журнал — `Docs/NATIVE_LEDGER.md`). То, что ещё не переписано,
   исполняет перевод машинного кода V30 в Z80, поэтому игра целая на каждом шаге. Титул и цикл кадров — это
   Python-версия порта (`Source/Python/rtype_port`, запуск на ПК — `run_python.cmd`), переведённая в Z80.
 - **Графика.** Растр автомата 384×256 офлайн увеличен до 640×480 (xBRZ ×6, затем Lanczos) и лежит в паке
@@ -118,3 +119,21 @@ GS эффекты идут на простой AY, а мелодии не зву
 | `pre-releases` | опорные версии: исходники, SPG и `RTYPECOD.PAC` (в репозиторий не входят) |
 
 Правила проекта и устройство подробно — в `CLAUDE.md`, решения и замеры — в `PROJECT_MEMORY.md`.
+
+## Ссылки
+
+Автомат:
+- [R-Type](https://ru.wikipedia.org/wiki/R-Type) и [Irem](https://ru.wikipedia.org/wiki/Irem) — Википедия; про плату M72 — в статье об игре.
+- [R-Type (World) на Irem M72](https://adb.arcadeitalia.net/dettaglio_mame.php?game_name=rtype) — Arcade Database: набор ROM, железо, драйвер MAME.
+- [Драйвер MAME `m72.cpp`](https://github.com/mamedev/mame/blob/master/src/mame/irem/m72.cpp) — устройство платы M72
+  по коду эмулятора.
+
+Микросхемы:
+- [NEC V30](https://ru.wikipedia.org/wiki/NEC_V20) — процессор автомата (в Википедии — статья о NEC V20 и V30).
+- [Yamaha YM2151](https://ru.wikipedia.org/wiki/Yamaha_YM2151) — звук автомата.
+- [Zilog Z80](https://ru.wikipedia.org/wiki/Zilog_Z80) — процессор ZX Evolution; на автомате он же ведёт звук.
+- [FT812](https://brtchip.com/product/ft812/) — видеоконтроллер VDAC2, серия EVE компании [FTDI](https://ru.wikipedia.org/wiki/FTDI) (теперь Bridgetek); отдельной статьи в
+  Википедии нет, ссылка — на страницу производителя.
+- [Yamaha YM2203](https://ru.wikipedia.org/wiki/Yamaha_YM2203) — два таких стоят в TurboSound FM.
+- [AY-3-8910 / YM2149](https://ru.wikipedia.org/wiki/AY-3-8910) — звуковой чип AY.
+- [General Sound](https://ru.wikipedia.org/wiki/General_Sound) — звуковая плата для эффектов.
