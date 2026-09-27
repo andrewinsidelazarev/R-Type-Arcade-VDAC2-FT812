@@ -135,7 +135,7 @@ Capstone и запрещает автопроверкой любой друго�
 | `$00A0/$00A2` | words | code/attribute последнего Beam-meter tile |
 | `$00D4` | word | второй owner-pointer slot collision records; `$F4E5/$F518` сравнивают его с BP, `$F51E` освобождает |
 | `$2040` | word | input word 0: P1/P2 directions и buttons, active-low после чтения port 0 |
-| `$2042` | word | input word 1: Start/Coin/Service/DMA-complete, active-low после port 2 |
+| `$2042` | word | input word 1: Start / Coin / Service / DMA-complete, active-low после port 2 |
 | `$2044` | word | DSW word после port 4 |
 | `$2050/$2052` | words | предыдущий/current samples auxiliary input word, обновляемые `$01F0…$01FA` для edge detection |
 | `$2EB4` | word | main IRQ/frame phase counter: увеличивается IRQ-путями `$012F/$0299`, его bits задают cadence input/credit logic |
@@ -321,13 +321,13 @@ entries имеет semantic-map context. После автоматическог
 | `$3924` | общий player weapon/Force/Bit geometry dispatcher: загрузка hit extents, выбор таблиц по `$003E/$003C` и indirect state jump |
 | `$4FB9` | очистить одну foreground HUD cell `$0FA0/0` и увеличить dirty `$2F30` |
 | `$6788` | создать группу children/projectiles `$5000/$67D5` из восьмибайтных velocity records |
-| `$77C1` | runtime большого terrain enemy `$74B4`: motion/fire/render/collision/death substate chain |
+| `$77C1` | runtime большого terrain enemy `$74B4`: motion / fire / render / collision / death substate chain |
 | `$8355` | runtime targeting enemy `$80E3`: table motion, flash, fire, terrain/bounds и damage chain |
 | `$9DD9` | клонировать mouth-projectile `$F000/$9EC0` из координат/velocity parent projectile, resource `$3F` |
 | `$E98D` | скопировать/нормализовать packed score после NEC `ADD4S`, обновить caches `$2F4D/$2F4F` |
 | `$E9A0` | tilemap queue pump gate `$2F1F`; вызывает `$E9E7` для pending foreground/background strip jobs |
 | `$E9E7` | подготовить strip job и dispatch в `$EA95/$EB02` для foreground/background descriptor stream |
-| `$EC61` | заполнить N foreground collision/HUD records парой `code=$0019,attr=$008F` |
+| `$EC61` | заполнить N foreground collision/HUD records парой `code=$0019, attr=$008F` |
 | `$EDD9` | установить 24-bit RNG seed `$2F28:$2F2A = $03_01_05` |
 | `$F3FF` | выбрать stage/difficulty sound command из `ES:$8C0C/$8C02` и отправить через `$0303` |
 | `$F43B` | создать `$0100/$F44E` timer `$0080`; caller `$F01B` использует уже загруженный priority `$FFFE` |
@@ -363,12 +363,12 @@ entries имеет semantic-map context. После автоматическог
 | `$76AC` | четвёртый state `$74B4`: render `$779E`, collision `$F6DA`, flash/death chain; transition назначает `$7719` |
 | `$7719` | пятый state `$74B4`, завершающий его motion/fire cycle и возвращающий ROM-defined следующий handler; damage/death остаются `$F6DA/$777B` |
 | `$7891` | runtime enemy, создаваемого `$78F8`: интегрирует обе Q8 velocity через поля `+$30/+$20`, выбирает descriptor `$346A…$349A` по знаку/величине vertical velocity и направлению |
-| `$8138/$82D6` | крупный tracking enemy: каждые 32 update получает сектор через `$1D89`, читает 16-векторную Q8 матрицу `$3966`, проверяет terrain по знакам скорости; при вертикальном совмещении счётчик `+$14` переводит объект в 31-update атаку `$82D6`; на timer `$10` `$8355` создаёт flash `$83DF` и летящий child `$842C`; hitbox `$3956=(-16,+16,-20,+20)`, damage `$F6DA`; child `$842C` имеет player hitbox `$395E=(-24,+20,-2,+2)` |
+| `$8138/$82D6` | крупный tracking enemy: каждые 32 update получает сектор через `$1D89`, читает 16-векторную Q8 матрицу `$3966`, проверяет terrain по знакам скорости; при вертикальном совмещении счётчик `+$14` переводит объект в 31-update атаку `$82D6`; на timer `$10` `$8355` создаёт flash `$83DF` и летящий child `$842C`; hitbox `$3956=(-16, +16, -20, +20)`, damage `$F6DA`; child `$842C` имеет player hitbox `$395E=(-24, +20, -2, +2)` |
 | `$86EA` | runtime animated enemy `$86A6`: fire `$F63A`, foreground delta, периодический угол `$1D89`, render, collision `$F694` и bounds cleanup |
 | `$875D…$893E` | Stage 2 timed spawner: parent life `$0600`, parameter script `$3AFE` меняет target Y/spawn/delay cadence поверх difficulty `$3B12`; `$8817` создаёт children resource `$2D`, initial Y с RNG; `$8861` сочетает Q8 X `$3B2A`, jitter target Y и 128-count oscillator, затем optional delay переводит в aimed `$893E` через `$1D89`, velocity root `$3B22`, direction descriptors `$3B32`, collision `$3C12`, death `$E7A6` |
 | `$8490` | Stage 7 enemy `$8469`: foreground delta, Q8 `vx=-$0200`, fire `$F63A`, descriptor `$39A6`, collision `$39AC`; probe `(x-$20,y)` останавливает X на 8 update и задаёт `vy=±$0100` по `$2EB6&1`, вертикальный probe `±$18` отражает знак |
 | `$85B0/$865E` | Stage 5 composite shooter `$8561`: Q8 `vx=-$0100`, 8 двухdescriptorных phases `$39CE`, HP `$1E`, flash resource `$55`; difficulty records `$39B4`, пять Y offsets `$39C4`, child `$E6AB`; death `$E817` использует resource `$01` (resource `$63` принадлежит отдельному entry `$E80C`) |
-| `$67D5/$687D/$69B4` | 16-direction families: `$67D5/$687D` use collision `$2D84=(-4,+4,-4,+4)`; event `$696E` reads HP bytes `$2D8C=(3,5,8,14)`, script/count records `$92AC`, collision `$2E36=(-12,+12,-12,+12)`, а `$69B4` выбирает descriptor `$2DD0+6*direction` и один из 16 signed terrain probes `$2D90` по direction `object+$16` |
+| `$67D5/$687D/$69B4` | 16-direction families: `$67D5/$687D` use collision `$2D84=(-4,+4,-4,+4)`; event `$696E` reads HP bytes `$2D8C=(3,5,8,14)`, script/count records `$92AC`, collision `$2E36=(-12, +12, -12, +12)`, а `$69B4` выбирает descriptor `$2DD0+6*direction` и один из 16 signed terrain probes `$2D90` по direction `object+$16` |
 | `$89B0` | первый terrain-aware state enemy `$897E`: fire `$F63A`, четыре terrain probe; только если ни одна запрошенная ось не сдвинулась, ставит `+$22=$03FF` и handler `$8AEE` |
 | `$8AEE` | отдельный зеркальный state `$897E`: инвертирует vertical target; blocked vertical branch сокращает `+$22` до 1, successful pass декрементирует его, полностью blocked pass сразу возвращает `$89B0` |
 | `$95F1` | Q8 mobile enemy: velocity из `+$10/+$12`, четырёхфазный descriptor `$417E`, terrain/bounds, hitbox `$4196=(-4,+4,-4,+4)` и damage `$F694`; следующие 16 descriptors `$419E…$41FD` в этой ревизии не адресуются |
@@ -393,7 +393,7 @@ entries имеет semantic-map context. После автоматическог
 | `$42B1` | matrix object anchor initializer: optional phase `+$0C` по gate `$006A`, округляет Force `$64/$68` к сетке 8+4 и ставит `$42DD` |
 | `$42DD` | scrolling pre-delay state: foreground delta, geometry `$3924`, после timer получает resource `$3D`, flash `$70`, ставит `$4311`; invalid terrain ведёт cleanup `$4481` |
 | `$4311` | восьмисекторный moving/composite weapon state: deltas `ES:$2086`, четыре shifted renders `ES:$2056`, terrain probes, optional sound `$3B`, timer/linked-neighbour conditions; terminal animation `$4467` |
-| `ES:$204E…$2099` | hitbox `(12,12,4,4)` для matrix projectile; восемь записей `$2056` `(terrain dx,terrain dy,branch descriptor)`; четыре точных диагональных шага `$2086=(8,8),(8,-8),(-8,-8),(-8,8)`; `$2096=(8,-8)` — неадресуемый пятый вектор |
+| `ES:$204E…$2099` | hitbox `(12,12,4,4)` для matrix projectile; восемь записей `$2056` `(terrain dx, terrain dy, branch descriptor)`; четыре точных диагональных шага `$2086=(8, 8), (8, -8), (-8, -8), (-8, 8)`; `$2096=(8,-8)` — неадресуемый пятый вектор |
 | `$4467` | шестибайтно обратный terminal descriptor stream от `ES:$20F4`; после offset 0 release resource и восстановление handler из `+$0A` |
 | `$448E` | зеркальный matrix anchor initializer: phase 0/2 по `$006A`, Force `$64/$68` округляются к 8+4, следующий handler `$44BA` |
 | `$44EE` | двухфазный terrain-aware state: X delta `ES:$2096`, descriptor pointer `ES:$20A2`, toggles `+$0C^=2`, sound `$3B` для parent `$3BFE`, neighbour/flash checks; terminal `$456A` |
@@ -408,14 +408,14 @@ entries имеет semantic-map context. После автоматическог
 | `$4E42` | горизонтальный projectile: X+=`+$14`, blink от `$2EB6&4`, descriptor `+$0C`, visual `$26DC`, bounds, Force collision `$2736`, terrain; terminal timer `$30`/handler `$4E88` |
 | `$4E88` | terminal descriptor stream от `ES:$26AC`, offset уменьшается на 6 до нуля; release resource и возврат `+$0A` |
 | `$4EAF` | однокадровый visual при `(R-9.x+8,R-9.y)`: чередует descriptors `$26F2/$26F8` по `$2EB6&1`, затем release resource и delete |
-| `$5D2D` | runtime enemy `$8020` от stage handler `$5CEA`: X velocity `-$0200`, 8-phase descriptor `$299A`, difficulty-0 `$298A=(-$0600,$0030)`, collision `$29CA=(-9,+9,-5,+5)`, child fire helper `$5D9A`; child `$E6AB/$E6C0` интегрирует унаследованную Q8 X velocity, рисует двухdescriptorный stream `$84CE`, collision `$84FE=(-16,+16,-4,+4)`; hit parent ставит `$E7BE`, sound `$50` и job `$E8BD/$86F4` |
+| `$5D2D` | runtime enemy `$8020` от stage handler `$5CEA`: X velocity `-$0200`, 8-phase descriptor `$299A`, difficulty-0 `$298A=(-$0600,$0030)`, collision `$29CA=(-9,+9,-5,+5)`, child fire helper `$5D9A`; child `$E6AB/$E6C0` интегрирует унаследованную Q8 X velocity, рисует двухdescriptorный stream `$84CE`, collision `$84FE=(-16, +16, -4, +4)`; hit parent ставит `$E7BE`, sound `$50` и job `$E8BD/$86F4` |
 | `$5D9A` | fire cadence helper `$5D2D`: countdown `+$34`, reload из `+$30`, создаёт `$6000/$E6AB` в координатах parent с velocity/parameter `+$32`, sound `$59` |
 | `$5F3C` | 45 Stage 6 enemies от `$5EED`: command bits задают turn direction/mirror/speed, records `$9324` — X/Y/initial cardinal direction, speed offset `$931C`, Q8 velocity table `$2A80`, двухdescriptorный composite `$2AC0/$2AF0`, HP 10, resources `$28/$51`; трёхточечный ray `$2A40` по collision меняет direction, damage helper `$6081`, death `$E817` |
 | `$6081` | две последовательные damage probes `$F6DA` с tables `$2B20/$2B30` либо `+8` variant; успешный hit ставит sound `$56` и flash counter `+$11=$1F` |
 | `$69B4` | runtime terrain enemy `$8010/$69B4`: priority `$F5C1`, scroll, fire `$F63A`, descriptor `$2DD0`, terrain probe `$1E6C` с заменой VRAM `$0FA0→$09F6/$0082`, damage `$F6DA`, flash `$6A78`, death/cleanup |
 | `$6A78` | hit-flash renderer `$69B4`: пока `+$3D!=0` декрементирует; раз в четыре counts временно подменяет resource `+$06` на flash resource `+$3C`, иначе обычный `$1BCC` |
 | `$6EC4` | fixed large Stage 7 object `$6E9B`: `(x,y)=($0110,$0108)`, HP `$C8`, resource `$54`, scroll; probe `(x+$40,y)` через `$1EB5` разрешает Q8 `vx=$00C0`, четыре двухrecord composite roots `$3042/$304E/$305A/$3066`, collision `$3072`; смерть `$E817` плюс 18 overlapping debris pairs `$301C` в `$E7B6` |
-| `$6FD0` | Stage 2 object от `$6F89`: 14-byte record `$9384` задаёт Y, две пары Q8 velocities, 16-word descriptor table и target angle; `$93BC=(-1,$80,$180,$200)` выбирает angle/timer gate; HP принудительно 10, resources `$27/$55`, collision `$31EE` |
+| `$6FD0` | Stage 2 object от `$6F89`: 14-byte record `$9384` задаёт Y, две пары Q8 velocities, 16-word descriptor table и target angle; `$93BC=(-1, $80, $180, $200)` выбирает angle/timer gate; HP принудительно 10, resources `$27/$55`, collision `$31EE` |
 | `$7048` | continuation `$6FD0`: foreground scroll; на terrain code `$0FA0` интегрирует primary velocity и frame `table+4`, иначе secondary velocity и 16-frame ring; hit входит на 23 update в `$7106`, death — `$E817` resource `$63` |
 | `$7106` | death/terminal state той же цепочки: damage `$F6DA`, sound, resource release `$523E/$F50C`, helper `$7168` и окончательное удаление `$03EC` |
 | `$7168` | flash/composite helper `$7106`: выбирает descriptor через timer/phase и вызывает `$1C1B` без изменения state |
@@ -425,9 +425,9 @@ entries имеет semantic-map context. После автоматическог
 | `$73A0` | terrain/bounds helper `$72D2`: probes `$1E6C/$1D6B`, возвращает flags вызывающему state |
 | `$73DB` | child-shot helper `$72D2`: target angle `$1D89`, allocator `$03A6` создаёт `$7435`, получает resource `$51EE` |
 | `$7435` | child projectile `$73DB`: Q8 motion от direction matrix, 4-phase `$327E` с object-slot phase, collision `$3296`; первые 8 even checks пропускают terrain, затем `$1EB5` и background threshold `$07D0`, player `$F485`, bounds; collision переходит в breakup `$E686` |
-| `$7607` | initializer большого terrain enemy `$74B4`: заполняет ROM motion/damage fields и выбирает первый из states `$7502/$759F/$7654/$76AC/$7719` |
+| `$7607` | initializer большого terrain enemy `$74B4`: заполняет ROM motion/damage fields и выбирает первый из states `$7502` / `$759F` / `$7654` / `$76AC` / `$7719` |
 | `$780E` | child/runtime большого terrain enemy `$77C1`: Q8 motion, descriptor `$1BCC`, terrain `$1E6C`, player collision `$F694`, sound и resource cleanup |
-| `$78F8` | 15 Stage 5 formation events: command high bits выбирают priority `$34AE=(4400,4300,4200,4100)`, `$F88C` задаёт position, `$F912` — общий motion root; priority threshold `$4280` выбирает 11-record stream `$34B6` либо 17-record `$34E2` |
+| `$78F8` | 15 Stage 5 formation events: command high bits выбирают priority `$34AE=(4400, 4300, 4200, 4100)`, `$F88C` задаёт position, `$F912` — общий motion root; priority threshold `$4280` выбирает 11-record stream `$34B6` либо 17-record `$34E2` |
 | `$7935` | formation parent от `$78F8`: countdown pairs `handler,delay`, каждый allocator child получает текущий decrementing priority, общий X/Y и `$F5C1` root; поле `+$3C` образует linked chain newest→previous, zero delay удаляет parent в том же update |
 | `$799C` | первый child initializer formation `$7935`: получает resource, задаёт стартовые phase/velocity/link fields и ставит `$79C1` |
 | `$79C1` | первый child runtime: priority `$F5C1`, damage `$F6DA`, renderer `$7D45`, timer/motion state transitions и sound |
@@ -551,7 +551,7 @@ entries имеет semantic-map context. После автоматическог
 | `$BA9B` | timer-only child/controller от `$BA5C`; меняет handler/fields без external calls |
 | `$BAA7` | randomized projectile controller от `$B85B`: RNG и allocator по таблице handlers `ES:$612C`, delete после ROM count |
 | `$BB40` | один из 11 handlers random table `$612C`: RNG initialization и resource `$51EE`, затем общий `$BC95` |
-| `$BB72/$BB7E/$BB8A/$BB96/$BBA2/$BBAE` | шесть коротких random-table initializers: задают разные ROM velocity/phase constants и переводят object в `$BC95` |
+| `$BB72` / `$BB7E` / `$BB8A` / `$BB96` / `$BBA2` / `$BBAE` | шесть коротких random-table initializers: задают разные ROM velocity/phase constants и переводят object в `$BC95` |
 | `$BBC3` | random-table initializer с RNG/resource `$51EE`; может немедленно delete, иначе `$BC95` |
 | `$BC08` | random-table initializer с resource `$51EE`, затем `$BC95` |
 | `$BC31/$BC63` | два RNG/resource initializers random table, затем общий runtime `$BC95` |
@@ -566,7 +566,7 @@ entries имеет semantic-map context. После автоматическог
 | `$C0CA` | final-stage controller от `$C0A9`: progression `$30`, callback script `ES:$6416` через `$C0DC`, terrain/player/damage `$1EB5/$F578/$F75F`, allocator spawn table и terminal states `$C1EB/$C4BC` |
 | `$C1EB` | final-stage transition state `$C0CA`: sound и tilemap job `$EAA9`, затем ROM state advance |
 | `$C284` | child/controller, создаваемый `$C1A3`: RNG, sound, allocator и delete по ROM count |
-| `$C2F0/$C2F6/$C305/$C30A/$C315/$C31B/$C326/$C32C/$C332/$C37A` | десять коротких callbacks script `ES:$6416`: каждый записывает конкретные final-stage state/scroll bytes; `$C2F0/$C31B` также sound, `$C332` terrain `$1EB5` |
+| `$C2F0` / `$C2F6` / `$C305` / `$C30A` / `$C315` / `$C31B` / `$C326` / `$C32C` / `$C332` / `$C37A` | десять коротких callbacks script `ES:$6416`: каждый записывает конкретные final-stage state/scroll bytes; `$C2F0/$C31B` также sound, `$C332` terrain `$1EB5` |
 | `$C37F` | callback script `ES:$6416`: allocator создаёт `$C39C`, при отказе/старом объекте вызывает delete `$03EC` |
 | `$C39C` | moving final-stage child `$C37F`: ROM motion/timer и terrain helper `$C434`, transition `$C3EE` |
 | `$C3EE` | paired continuation `$C39C`, также использует terrain helper `$C434` |
@@ -575,7 +575,7 @@ entries имеет semantic-map context. После автоматическог
 | `$C57D` | terminal scroll sequence `$C4BC`: задаёт fixed velocities/timers, sounds `$1A/$1C`, scroll/palette `$5579/$F130/$F3FF`, затем next-stage path |
 | `$C5F8` | прочитать трёхбайтную запись movement script `object+$12`: два signed direction bytes и duration; `$80` возвращает carry как sentinel |
 | `$C61F` | пройти 10-byte spawn records `ES:$6CE0…$6F87`: сравнить threshold с `-object.x`, allocator handler `+6`, записать child X/Y и parent link, шаг `$0A` |
-| `$C656/$C662/$C66E/$C67A/$C686/$C692/$C69E/$C6AA/$C6B6/$C6C2/$C6CE/$C6DA/$C6E6/$C6F2/$C6FE/$C70A/$C716/$C722/$C72E/$C73A/$C746/$C752/$C75E/$C76A/$C776/$C782/$C78E` | 27 leaf handlers spawn table `$6CE0…$6F87`: без external calls, каждый записывает собственный ROM constant/state и возвращает; точный target выбирается record `+6` |
+| `$C656` / `$C662` / `$C66E` / `$C67A` / `$C686` / `$C692` / `$C69E` / `$C6AA` / `$C6B6` / `$C6C2` / `$C6CE` / `$C6DA` / `$C6E6` / `$C6F2` / `$C6FE` / `$C70A` / `$C716` / `$C722` / `$C72E` / `$C73A` / `$C746` / `$C752` / `$C75E` / `$C76A` / `$C776` / `$C782` / `$C78E` | 27 leaf handlers spawn table `$6CE0…$6F87`: без external calls, каждый записывает собственный ROM constant/state и возвращает; точный target выбирается record `+6` |
 | `$C7C3` | final-stage weapon/object controller: RNG, allocator, collision helper `$C93F`, затем delete по ROM records |
 | `$C846` | continuation controller `$C7C3`, выполняющий очередной allocator step |
 | `$C8D6` | terminal controller state: sound/job, terrain `$1EB5`, delete `$03EC` |
@@ -586,7 +586,7 @@ entries имеет semantic-map context. После автоматическог
 | `$CA84` | continuation `$C9F9` с allocator step |
 | `$CB14` | terminal `$C9F9`: sound/job, terrain `$1EB5`, delete `$03EC` |
 | `$CB66` | общий leaf child четырёх sites `$CA8A/$CAA9/$CACB/$CAED`, только fixed state constants |
-| `$CB7D` | collision dispatcher `$C9F9`: `$F493/$F4AA/$F525/$F548/$F560` в ROM порядке |
+| `$CB7D` | collision dispatcher `$C9F9`: `$F493` / `$F4AA` / `$F525` / `$F548` / `$F560` в ROM порядке |
 | `$CBEF` | spawn-table child initializer: получает resource `$51EE` и переводит object в `$CC1B` |
 | `$CC1B` | multipart final-stage child: composite `$1CA6`, damage `$F6DA`, nested allocator/resources, sound и cleanup |
 | `$CDED` | continuation `$CC1B`: Q8 Y `$0689`, composite `$1CA6`, collision `$F75F`, allocator child, jobs/resource cleanup |
@@ -606,7 +606,7 @@ entries имеет semantic-map context. После автоматическог
 | `$D497` | общий renderer `$D3C9/$D4CD/$D518`: composite `$1C1B/$1CA6` по phase/side |
 | `$D4CD` | continuation `$D3C9`: Q8 Y, collision `$F75F`, renderer, resource cleanup/delete |
 | `$D518` | terminal/spawn continuation: collision/render, allocator child, job/resource cleanup |
-| `$D596/$D5A3/$D5B0/$D5BD/$D5CA` | пять leaf handlers spawn table: задают distinct fixed direction/state constants без external calls |
+| `$D596` / `$D5A3` / `$D5B0` / `$D5BD` / `$D5CA` | пять leaf handlers spawn table: задают distinct fixed direction/state constants без external calls |
 | `$D5D7` | шестой spawn-table initializer: RNG `$EDE9`, resource `$51EE`, state `$D608` |
 | `$D608` | active child `$D5D7`: target angle, `$1BCC`, damage `$F6DA`, nested allocator/resource, sound/jobs и cleanup |
 | `$D71D` | continuation `$D608`: angle `$1D89`, descriptor `$1BCC`, ROM timer transition |
@@ -635,7 +635,7 @@ entries имеет semantic-map context. После автоматическог
 | `$DF95` | terminal multipart state: composite/damage, helper `$E00F`, resource release/delete |
 | `$E00F` | spawn helper `$DF95`: RNG, sound, allocator child и resource `$51EE` |
 | `$E060` | child `$E00F`: Q8 motion, `$1BCC`, terrain `$1EB5`, player `$F694`, bounds `$1D6B`, resource release/delete |
-| `$E0D9` | continuation `$E060` с тем же Q8/render/terrain/player/bounds contract |
+| `$E0D9` | continuation `$E060` с тем же Q8 / render / terrain / player / bounds contract |
 | `$E129` | spawn-table initializer: resource `$51EE`, fire parameters `$F8A7`, state `$E157` |
 | `$E157` | active child `$E129`: angle `$1D89`, `$1BCC`, damage `$F6DA`, helper `$E201`, sound/jobs/resource cleanup |
 | `$E201` | child-spawn helper `$E157`: angle, allocator, resource `$51EE`, ROM velocity/link fields |
@@ -649,7 +649,7 @@ entries имеет semantic-map context. После автоматическог
 | `$E6C0` | generic projectile `$E6AB`: Q8 X, composite `$1C1B`, player `$F485`, bounds `$1D6B`, resource release/delete |
 | `$E700` | Dobkeratops spawn-record handler: resource `$51EE`, ROM fields и следующий explosion/projectile state |
 | `$E80C` | random-controller child handler `$8D12`: resource `$51EE`, ROM fields и следующий state |
-| `$8C12…$8D54` | 30 Stage 7 set-piece objects: `$FA55` выбирает Y/path из `$93C4`, initial delay `(RNG&$FF)<<1`; explosions `$E7BE` после delay, затем через 16 и 8 update в offsets `(-4,+14),(+16,0),(-4,-4)`, потом `$E80C` resource `$63`; `$8D54` исполняет packed `(tilemap delta,code)` path с независимым сложением BL/BH и attr `$000A` |
+| `$8C12…$8D54` | 30 Stage 7 set-piece objects: `$FA55` выбирает Y/path из `$93C4`, initial delay `(RNG&$FF)<<1`; explosions `$E7BE` после delay, затем через 16 и 8 update в offsets `(-4, +14), (+16, 0), (-4, -4)`, потом `$E80C` resource `$63`; `$8D54` исполняет packed `(tilemap delta,code)` path с независимым сложением BL/BH и attr `$000A` |
 | `$EAA9` | final-stage terrain/tilemap job: probe `$1EB5`, затем helper `$EAD0` для записи strip/cell state |
 | `$EAD0` | helper `$EAA9`, нормализующий адрес/индекс через `$EAE1` |
 | `$EAE1` | leaf arithmetic/address helper `$EAD0`, без внешних calls |
@@ -674,7 +674,7 @@ entries имеет semantic-map context. После автоматическог
 | `$FA90` | command bit `$10` decoder: X=`$02C0`, Y=`$0174` либо `$009C` |
 | `$FAA5` | command low-nibble decoder: word `ES:$943C` → period `+$20`; RNG `$EDE9 & (period-1)` → phase `+$22` |
 | `$FAC1` | command low-nibble decoder: X=`$02C8`, Y из word table `ES:$941C` |
-| `$FB53` | six-object controller child от `$FB10`: восьмибайтные `(duration,vx,vy,descriptor)` records, Q8 motion, `$1BCC`, X bound/cleanup, resource release/delete |
+| `$FB53` | six-object controller child от `$FB10`: восьмибайтные `(duration, vx, vy, descriptor)` records, Q8 motion, `$1BCC`, X bound/cleanup, resource release/delete |
 
 Final-stage handler `$9660` создаёт невидимый `$2000/$9674` spawner в
 `X=$02C0`, выбирая Y через bit `$10` (`$0174/$009C`). Таблица
@@ -697,10 +697,10 @@ descriptor по `$2EB6&8`, использует collision `$436C=(-9,+9,-9,+9)` 
 | Instruction | Источник цели | Полная граница |
 |---:|---|---|
 | `$00D3` | main callback word `DS:$3060` | bootstrap записывает `$55E8` |
-| `$00F6` | восьмибайтная task-ring запись `DS:$1E20 + cursor` | 16 producer callbacks `$E865,$E883,$E8A0,$E8BD,$EA1F,$EA39,$EA41,$EA49,$EA51,$EA73,$EBF1,$EC14,$EC7B,$ED3A,$ED58,$ED93`; генератор выводит набор обратным разбором CX во всех вызовах allocator `$0384`, включая путь `MOV DX,$EA1F` (`$1156`) → `MOV CX,DX` (`$1175`) |
+| `$00F6` | восьмибайтная task-ring запись `DS:$1E20 + cursor` | 16 producer callbacks `$E865`, `$E883`, `$E8A0`, `$E8BD`, `$EA1F`, `$EA39`, `$EA41`, `$EA49`, `$EA51`, `$EA73`, `$EBF1`, `$EC14`, `$EC7B`, `$ED3A`, `$ED58`, `$ED93`; генератор выводит набор обратным разбором CX во всех вызовах allocator `$0384`, включая путь `MOV DX,$EA1F` (`$1156`) → `MOV CX,DX` (`$1175`) |
 | `$0244/$0259/$0267` | handler word `object+$00` директора, 40 fixed slots и linked slots | union initial `ES:$081A[40]`, всех `DX→$03A6` producers, state writes `MOV [BP/SI],imm` и bootstrap `$1BA6/$1BA7` |
 | `$1BC6` | event opcode table | 50 words `ES:$B92D…$B98F`, 48 уникальных handlers; `$0800` повторён трижды |
-| `$257F/$2612` | Force level/state table | четыре words `ES:$1430 = $2682,$26AD,$26D0,$26E9` |
+| `$257F/$2612` | Force level/state table | четыре words `ES:$1430 = $2682, $26AD, $26D0, $26E9` |
 | `$3957` | player-weapon matrix | `ES:$1B80…$1FFF`, 48 таблиц по 12 words, 69 уникальных callbacks; `$3959` занимает 384 из 576 entries |
 | `$C0DC` | final-stage threshold/callback script | 39 исполняемых records `ES:$6416…$64B1`; `$8000,$FFF2` по `$64B2` является sentinel и не объявляется ребром |
 
@@ -863,7 +863,7 @@ object list и Sprite RAM MAME frame 1500:
 | Event handler | Runtime handler | ROM sprite codes | Объект |
 |---:|---:|---|---|
 | `$5DC8` | `$5E8E` children | `$0132` (formation phase) | крупный patrol formation |
-| `$596D` | `$59A2` | `$0036/$00F2/$0160/$0161/$00F4` | красный scripted flyer |
+| `$596D` | `$59A2` | `$0036` / `$00F2` / `$0160` / `$0161` / `$00F4` | красный scripted flyer |
 | `$5A02` | `$5A2B` | `$0100/$0102…` | наземный walker |
 
 Это не имена, назначенные по внешнему виду: соответствие подтверждено точными
@@ -1043,7 +1043,7 @@ object. Буквальные границы `$1D6B…$1D88`:
 | V30 | HEX | Буквальный результат |
 |---:|---|---|
 | `$F876…$F88B` | `8b d9 81 e3 0f 00 03 db c7 44 04 c8 02 26 8b 87 b0 8d 89 44 08 c3` | `x=$02C8`, `y=ES:[$8DB0+2*(CL&$0F)]` |
-| `$F88C…$F8A6` | `8b d9 81 e3 0f 00 03 db 03 db 26 8b 87 d0 8d 89 44 04 26 8b 87 d2 8d 89 44 08 c3` | `(x,y)=ES:[$8DD0+4*(CL&$0F)]` |
+| `$F88C…$F8A6` | `8b d9 81 e3 0f 00 03 db 03 db 26 8b 87 d0 8d 89 44 04 26 8b 87 d2 8d 89 44 08 c3` | `(x, y)=ES:[$8DD0+4*(CL&$0F)]` |
 | `$F8F5…$F911` | `8b d9 8a df 81 e3 03 00 03 db 03 db 26 8b 87 50 92 89 44 30 26 8b 87 52 92 89 44 34 c3` | поля `+$30/+$34` из `ES:$9250`, index `CH&3` |
 | `$F926…$F931` | `8b c1 c1 e8 04 25 07 00 88 44 11 c3` | `byte +$11=(CX>>4)&7` |
 | `$F97D…$F984` | `8a c5 24 01 88 44 1e c3` | direction flag `byte +$1E=CH&1` |
@@ -1346,8 +1346,8 @@ Wave проверяется отдельной группой `$F4AA`: перв�
 
 | MAME frame | object anchor x/y | native bounds X/Y |
 |---:|---:|---|
-| 1319 | `$01D3,$0110` | `$01D1…$01E3,$0108…$0118` |
-| 1320 | `$01DB,$0110` | `$01D9…$01EB,$0108…$0118` |
+| 1319 | `$01D3,$0110` | `$01D1…$01E3, $0108…$0118` |
+| 1320 | `$01DB,$0110` | `$01D9…$01EB, $0108…$0118` |
 
 Это `x-2…x+16,y-8…y+8` относительно native anchor. Composite Wave sprite
 на frame 1319 начинается в native `(139,104)`, поэтому его реальный 640×480
@@ -1833,8 +1833,8 @@ High byte `+$12` меняется внутри последующих motion/ani
 
 | Начало Force | Результат оригинального ROM |
 |---|---|
-| `X=$01E0,Y=$0100,vx=$0900` | `$2614` доходит до `$0255`, probe следующего X встречает foreground wall и ставит `$24CE`; `$2AB4` ведёт Y `$00FE,$00FC,$00FA,$00F8,$00F6,$00F8,$00F6…` |
-| `X=$01E0,Y=$00F8,vx=$0900` | верхний проход свободен: `$2614` достигает `$0279`; `$F75F` фиксирует повреждение головы на frame 9501 и повторно на 9517, то есть строго по cadence `$2EB6&$0F==0` |
+| `X=$01E0, Y=$0100, vx=$0900` | `$2614` доходит до `$0255`, probe следующего X встречает foreground wall и ставит `$24CE`; `$2AB4` ведёт Y `$00FE`, `$00FC`, `$00FA`, `$00F8`, `$00F6`, `$00F8`, `$00F6`… |
+| `X=$01E0, Y=$00F8, vx=$0900` | верхний проход свободен: `$2614` достигает `$0279`; `$F75F` фиксирует повреждение головы на frame 9501 и повторно на 9517, то есть строго по cadence `$2EB6&$0F==0` |
 
 Это доказывает две детали, которые нельзя «сглаживать» в порте. Видимое
 двухпиксельное колебание свободного Force у центральной стены является
@@ -2095,8 +2095,8 @@ Event `ES:$BC03` при progression `$13A0` вызывает `$98FD`. Entry со
 
 | Количество | Priority / handler | Начальное состояние | Resource |
 |---:|---:|---|---:|
-| 1 | `$3810/$9B26` | `x=$0328,y=$0128,timer=$0200`, rear body | `$15` |
-| 1 | `$3818/$9B9B` | `x=$0358,y=$0100,timer=$0200`, vulnerable body owner | `$15`, затем `$16/$55` |
+| 1 | `$3810/$9B26` | `x=$0328, y=$0128, timer=$0200`, rear body | `$15` |
+| 1 | `$3818/$9B9B` | `x=$0358, y=$0100, timer=$0200`, vulnerable body owner | `$15`, затем `$16/$55` |
 | 4 | `$3821/$9F63` | шесть bytes из `ES:$4394`, timer `$0280` | — |
 | 18 | `$FF90…$FFA1/$A035` | десять bytes из `ES:$43AC…$445F` | `$17` |
 | 1 | `$FFA8/$A133` | `x=$0277,y=$00BF`, motion `$4C76` | `$17` |
@@ -2399,17 +2399,17 @@ Handler Wave `$31D9` выбирает пару sprite descriptors через
 |---:|---:|---|---:|
 | 4 | `$18AC/$18BE` | `$11/$12` | 16×16 |
 | 8 | `$18D0/$18E2` | `$41/$42` | 32×16 |
-| 12 | `$18F4/$1906` | `$46,$4E,$14 / $47,$4F,$15` | 48×16/17 |
-| 16 | `$1918/$192A` | `$50,$51,$59 / $52,$53,$5B` | 64×16 |
-| 20 | `$193C/$194E` | `$54,$55,$16 / $56,$57,$17` | 80×16 |
+| 12 | `$18F4/$1906` | `$46, $4E, $14 / $47, $4F, $15` | 48×16/17 |
+| 16 | `$1918/$192A` | `$50, $51, $59 / $52, $53, $5B` | 64×16 |
+| 20 | `$193C/$194E` | `$54, $55, $16 / $56, $57, $17` | 80×16 |
 
 Геометрия и проверка terrain вокруг Wave также целиком задаются ROM:
 
 | ES range | Формат | Достижимое использование |
 |---:|---|---|
-| `$180E…$183D` | 6 × `(left=4,right=5,lower=height,upper=height)`, `height=8,16,32,64,96,128` | не имеет runtime-ссылок; сохранённая альтернативная таблица hitbox |
-| `$183E…$1855` | 12 слов числа горизонтальных probes: `5,5,6,6,7,8,9,10,11,12,12,12` | `$3227…$3243` для power 4/8/12/16/20 выбирает только записи 0…4 |
-| `$1856…$187D` | 5 × четыре радиуса `(left,right,lower,upper)` | `$3213…$3224` выбирает запись stride 8 после семикадровой launch-задержки и передаёт её `$38F4` |
+| `$180E…$183D` | 6 × `(left=4, right=5, lower=height, upper=height)`, `height=8, 16, 32, 64, 96, 128` | не имеет runtime-ссылок; сохранённая альтернативная таблица hitbox |
+| `$183E…$1855` | 12 слов числа горизонтальных probes: `5, 5, 6, 6, 7, 8, 9, 10, 11, 12, 12, 12` | `$3227…$3243` для power 4/8/12/16/20 выбирает только записи 0…4 |
+| `$1856…$187D` | 5 × четыре радиуса `(left, right, lower, upper)` | `$3213…$3224` выбирает запись stride 8 после семикадровой launch-задержки и передаёт её `$38F4` |
 | `$187E…$188B` | 7 слов, все равны 1 | `$318A…$31D7` использует level 1…5 как начальную длину foreground/background terrain scan; слоты 0 и 6 недостижимы |
 
 Пять активных hitbox-записей `$1856` равны соответственно
@@ -2751,10 +2751,10 @@ mutators ниже. Все пути, реально записывающие в s
 | `$6ACB/$6C09` | `$6B8B/$6B8F`, `$6BD2/$6BD6`, `$6C1C/$6C20` | Stage 1 path: build `$03E8/$0081`, erase `$0FA0/$0081`; offsets идут по signed-byte-pair streams `ES:$2EC6` и object `$38/$3A`; полный state machine описан в разделе объекта `$4400` |
 | `$8D54` | `$8D60…$8D81` | script `object+$30`: records `(packed signed Δoffset word, code word)`, sentinel packed word 0; на каждой cell записать script code и attr `$000A` |
 | `$90E0` | `$90FC…$914D` | четыре cells вокруг probe; каждая `$09F6` заменяется `$0FA0/0`, остальные codes не меняются |
-| `$9FE9` | `$A003…$A02A` | раз в 2 VBlank записать `$0FA0` в текущий `object+$20`, затем добавить packed `(signed Δlow,signed Δhigh)` word из script `object+$10`; `$8000` завершает и уменьшает parent `+$34` |
+| `$9FE9` | `$A003…$A02A` | раз в 2 VBlank записать `$0FA0` в текущий `object+$20`, затем добавить packed `(signed Δlow, signed Δhigh)` word из script `object+$10`; `$8000` завершает и уменьшает parent `+$34` |
 | `$A290` | `$A458…$A462`, `$A50B…$A515` | при controller counters `$1760` и death branch одинаково пройти 1152 attribute words `$1C02…$2DFE`, шаг 4, оставить `word&$000F` |
 | `$A638` | `$A682…$A69C` | каждые 4 VBlank скопировать rectangle `CL×CH` code words из ROM `$1000:SI` в `$D000:DI`, после каждого code поставить attr `$0088`; X шагает low-byte `+2`, Y `+$100` |
-| `$B8D5` | `$B90C…$B916` | при timer `$0300` пройти 128 attributes `$1002…$11FE`, шаг 4, выполнить `word |= $0080` |
+| `$B8D5` | `$B90C…$B916` | при timer `$0300` пройти 128 attributes `$1002…$11FE`, шаг 4, выполнить `word \|= $0080` |
 | `$BE81` | `$BFDA…$BFE4` | после lethal path пройти 2048 attributes `$1002…$2FFE`, шаг 4, выполнить `word &= $000F` |
 | `$C0CA` | `$C11A…$C123` | после Force collision при progression `>=$0BC0`: восемь vertical cells от terrain DI, шаг `$100`, code `$03E8` |
 | `$C0CA` transition | `$C1CB…$C1D8` | 2048 iterations от DI `$1002`: mask background word `&$000F`, переключить ES на `$D000`, записать foreground `$0FA0`, DI суммарно `+4` за iteration |
@@ -2828,18 +2828,18 @@ handler (`$0000/$FFFF`) fixed-point граф раскрыл следующие e
 | `$1655/$1660` | timed character/tile animation: `$1660` читает phase bytes `ES:$0B5C`, pointer `ES:$0B7E`, строит foreground cells в `$D000`, меняет phase/timer до terminal branch |
 | `$17D7/$17FB/$1817/$1878` | конец presentation: input-or-timer gate, sound `$29`, очистка обоих слоёв, затем palette/resources; `$1878` ждёт input shadow либо timer и возвращается в общий `$12A7` |
 | `$188E/$18EB` | интерпретатор text/tile records: `$188E` каждые `object+$20` VBlank копирует 8-byte ROM command в `object+$30`; `$18EB` пишет последовательность tile code/attribute `$0006` в foreground VRAM и сохраняет обновлённые source/destination pointers |
-| `$1951/$1992/$19D3` | два варианта инициализации text stream из `object+$08`: header `(destination,attribute,count)`; `$1951` берёт source сразу после header, `$1992` — из `object+$16`; общий `$19D3` пишет один code/attribute, двигает указатели и завершает запись по счётчику |
+| `$1951/$1992/$19D3` | два варианта инициализации text stream из `object+$08`: header `(destination, attribute, count)`; `$1951` берёт source сразу после header, `$1992` — из `object+$16`; общий `$19D3` пишет один code/attribute, двигает указатели и завершает запись по счётчику |
 | `$1A51/$1AA1/$1B3E` | `$1A51` — ещё один header+inline-source text handler; `$1AA1` вычисляет параметры строки через `ES:$0BA2`; `$1B3E` после countdown копирует прямоугольник из ROM в foreground VRAM, учитывая `$0120` line bias и cleanup latch |
 | `$8E15/$8EA9/$8ECC/$8EFA` | полный автомат enemy `$8E15`: countdown, Q8 X/Y `$0672/$0689`, phase descriptor, renderer; `$8EA9` временно подменяет palette при hit-flash; `$8ECC` задаёт вертикальный заход; `$8EFA` через RNG выбирает следующий ROM motion/descriptor record |
 | `$A107` | terminal child boss-controller: следует background scroll и рисует `object+$20`; по timer освобождает resource, RNG выбирает sound `$50…$53`, затем объект удаляется |
-| `$A2B0/$A334/$A375/$A3B3/$A578` | три state boss-terrain transition: probe фиксированной точки `(01EC,010C)`, выбор ROM strip pointer из `ES:$51CA/$51DA`; общий `$A578` копирует четыре строки по 12 code words из World ROM в foreground VRAM, ставя attribute `$0088` |
+| `$A2B0` / `$A334` / `$A375` / `$A3B3` / `$A578` | три state boss-terrain transition: probe фиксированной точки `(01EC,010C)`, выбор ROM strip pointer из `ES:$51CA/$51DA`; общий `$A578` копирует четыре строки по 12 code words из World ROM в foreground VRAM, ставя attribute `$0088` |
 | `$A523` | transition countdown: на `$0100/$0080` посылает sounds `$1A/$1C`, переключает scroll/palette flags; по нулю возвращается в `$A473` |
 | `$B1AC` | boss/stage terminal countdown: на `$0080` sounds `$1A/$1C` и latch `$2FC1`; по нулю задаёт scroll `$2EEC=$0080`, выполняет palette/job transition |
 | `$C238/$C275` | два terminal timer state: `$C238` сбрасывает palette slots 1–3 через `$54E4`; `$C275` по нулю sound `$2B` и delete `$03EC` |
 | `$C5E8` | stage-complete delay: по нулю вызывает `$F01B` со stage 7 и удаляет controller |
-| `$D608/$D697` | parent-linked late enemy: damage hitbox `$7E46=(-12,+12,-10,+10)`; death/parent termination переводит в `$D71D` |
+| `$D608/$D697` | parent-linked late enemy: damage hitbox `$7E46=(-12, +12, -10, +10)`; death/parent termination переводит в `$D71D` |
 | `$D807/$D892` | его child projectile: Q8 velocity, render/terrain и player hitbox `$7E4E=(-8,+8,-8,+8)`; terminal animation выбирается знаком Y velocity |
-| `$D90E` | progression-driven phase state: последовательно читает 16 записей `$7E56` `(parent threshold, descriptor-table offset|spawn bit $8000)`, при установленном bit создаёт `$DAC8`; запись `($FFFF,4)` завершает timeline |
+| `$D90E` | progression-driven phase state: последовательно читает 16 записей `$7E56` `(parent threshold, descriptor-table offset\|spawn bit $8000)`, при установленном bit создаёт `$DAC8`; запись `($FFFF,4)` завершает timeline |
 | `$E71C/$E75C` | scrolling explosion/visual: timer вызывает `$E75C`, основной state следует background delta, берёт descriptor pointer из `(duration,pointer)` stream; `$E75C` вычисляет background VRAM cell, стирает/заменяет terrain и сохраняет адрес в `object+$20` |
 | `$EF1E` | каждые `$40` VBlank читает следующий word job из ROM stream `object+$10`, вызывает `$ED93`; нулевой word завершает stream и переводит state |
 | `$EF83/$EF97` | два последовательных timer: первый вызывает collision-table job `$5596`; второй ставит foreground clear `$E883`, scroll `$2EEC=$0080` и удаляет object |
