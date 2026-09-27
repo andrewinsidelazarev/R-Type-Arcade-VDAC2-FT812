@@ -1,0 +1,151 @@
+{
+  "format": "pyz80-memory-layout-v1",
+  "cpu_address_space": 65536,
+  "physical_page_size": 16384,
+  "physical_page_count": 256,
+  "regions": [
+    {
+      "name": "fixed-tables",
+      "purpose": "Permanently mapped page #00 tables at $1000..$3FFF",
+      "vma": {"start": 4096, "end": 16384},
+      "physical_pages": [{"first": 0, "last": 0}]
+    },
+    {
+      "name": "core-slot1",
+      "purpose": "Permanent Core code/data in CPU slot1, physical page #05",
+      "vma": {"start": 20480, "end": 32768},
+      "physical_pages": [{"first": 5, "last": 5}]
+    },
+    {
+      "name": "core-slot2",
+      "purpose": "Default Core code and FT812 command staging in page #06",
+      "vma": {"start": 32768, "end": 49152},
+      "physical_pages": [{"first": 6, "last": 6}]
+    },
+    {
+      "name": "object-code",
+      "purpose": "Existing object handler banks #0A..#0D",
+      "vma": {"start": 32768, "end": 49152},
+      "physical_pages": [{"first": 10, "last": 13}]
+    },
+    {
+      "name": "loader-code",
+      "purpose": "Existing SD/FAT32 loader bank #0E",
+      "vma": {"start": 49152, "end": 65536},
+      "physical_pages": [{"first": 14, "last": 14}]
+    },
+    {
+      "name": "rawpak-buffer",
+      "purpose": "Runtime SD/FAT32 sector buffer in page #0F",
+      "vma": {"start": 32768, "end": 49152},
+      "physical_pages": [{"first": 15, "last": 15}]
+    },
+    {
+      "name": "bootstrap-assets",
+      "purpose": "Startup graphics, title streams, TSFM and GS assets #10..#48",
+      "vma": {"start": 49152, "end": 65536},
+      "physical_pages": [{"first": 16, "last": 72}]
+    },
+    {
+      "name": "active-stage",
+      "purpose": "Loaded active-stage image, maximum 46 pages #49..#76",
+      "vma": {"start": 49152, "end": 65536},
+      "physical_pages": [{"first": 73, "last": 118}]
+    },
+    {
+      "name": "sprite-rom",
+      "purpose": "Immutable unpacked sprite ROM split around staging",
+      "vma": {"start": 49152, "end": 65536},
+      "physical_pages": [
+        {"first": 119, "last": 175},
+        {"first": 222, "last": 228}
+      ]
+    },
+    {
+      "name": "stage-staging",
+      "purpose": "SD loader staging image, maximum 46 pages #B0..#DD",
+      "vma": {"start": 49152, "end": 65536},
+      "physical_pages": [{"first": 176, "last": 221}]
+    },
+    {
+      "name": "collision-code",
+      "purpose": "Existing collision bank #E5",
+      "vma": {"start": 32768, "end": 49152},
+      "physical_pages": [{"first": 229, "last": 229}]
+    },
+    {
+      "name": "fixed-player-code",
+      "purpose": "Existing Force/Bits bank #E6",
+      "vma": {"start": 32768, "end": 49152},
+      "physical_pages": [{"first": 230, "last": 230}]
+    },
+    {
+      "name": "python-lut",
+      "purpose": "Generated Python lookup tables #E7",
+      "vma": {"start": 49152, "end": 65536},
+      "physical_pages": [{"first": 231, "last": 231}]
+    },
+    {
+      "name": "charge-beam-assets",
+      "purpose": "Charge animation and Beam command data #E8..#EB",
+      "vma": {"start": 49152, "end": 65536},
+      "physical_pages": [{"first": 232, "last": 235}]
+    },
+    {
+      "name": "sprite-metadata",
+      "purpose": "Compiler-owned sprite metadata #EC",
+      "vma": {"start": 49152, "end": 65536},
+      "physical_pages": [{"first": 236, "last": 236}]
+    },
+    {
+      "name": "ft812-render-queues",
+      "purpose": "Double-buffered C render queue pages #ED..#EE",
+      "vma": {"start": 49152, "end": 65536},
+      "physical_pages": [{"first": 237, "last": 238}]
+    },
+    {
+      "name": "ft812-command-templates",
+      "purpose": "Prebuilt FT812 command/state templates in page #EF",
+      "vma": {"start": 49152, "end": 65536},
+      "physical_pages": [{"first": 239, "last": 239}]
+    },
+    {
+      "name": "compiler-code",
+      "purpose": "Python compiler code banks #F0..#FF",
+      "vma": {"start": 32768, "end": 49152},
+      "physical_pages": [{"first": 240, "last": 255}]
+    }
+  ],
+  "lifecycle_overlays": [
+    {
+      "name": "slot2-runtime-page",
+      "domain": "vma",
+      "lifecycle": "Exactly one bank is mapped into CPU slot2 $8000..$BFFF; resident trampolines restore the resident page before returning.",
+      "members": [
+        "core-slot2",
+        "object-code",
+        "rawpak-buffer",
+        "collision-code",
+        "fixed-player-code",
+        "compiler-code"
+      ]
+    },
+    {
+      "name": "slot3-stream-page",
+      "domain": "vma",
+      "lifecycle": "Exactly one data or loader page is mapped into CPU slot3 $C000..$FFFF while its owner is active.",
+      "members": [
+        "loader-code",
+        "bootstrap-assets",
+        "active-stage",
+        "sprite-rom",
+        "stage-staging",
+        "python-lut",
+        "charge-beam-assets",
+        "sprite-metadata",
+        "ft812-render-queues",
+        "ft812-command-templates"
+      ]
+    }
+  ]
+}

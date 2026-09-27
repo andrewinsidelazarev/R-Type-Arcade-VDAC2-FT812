@@ -1,0 +1,32 @@
+{
+  "format": "pyz80-draw-bank-placement-v1",
+  "code_vma": {"start": 32768, "end": 49152},
+  "code_banks": [241, 242],
+  "resident_page": 0,
+  "resident": {
+    "bridge": {"start": 1280, "end_limit": 1952},
+    "gate": {"start": 1952, "end_limit": 2816},
+    "batch_cache": {"start": 2816, "end": 4096},
+    "coordinate_tables": {"start": 4096, "end": 8192},
+    "resident_tables": {"start": 8192, "end": 16384}
+  },
+  "ft812": {
+    "queue_pages": [237, 238],
+    "queue_vma": {"start": 49152, "end": 65536},
+    "record_vma": {"start": 51780, "end": 65536},
+    "command_template_page": 239
+  },
+  "cross_bank": {
+    "abi": "__sdcccall(0)",
+    "caller_page": 241,
+    "callee_page": 242,
+    "proxy_symbol": "_PyZ80FT_BuildSpriteBatchFast",
+    "resident_gate_symbol": "RTypePyDrawBank_CallF2C0",
+    "resident_gate_vma": 1952,
+    "callee_entry_symbol": "_PyZ80DrawBank1_BuildSpriteBatchFast",
+    "callee_entry_vma": 32768,
+    "edge_count": 1,
+    "return_gate_restores_page": 241,
+    "reentrant": false
+  }
+}

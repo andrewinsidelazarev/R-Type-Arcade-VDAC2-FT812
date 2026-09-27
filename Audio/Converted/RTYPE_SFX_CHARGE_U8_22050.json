@@ -1,0 +1,13 @@
+{
+  "command": "0x32",
+  "stop_command": "0x33",
+  "source": "Build\\Arcade\\Audio\\charge\\cmd_32_hold.wav",
+  "source_sha256": "d20ae81ac2b9c86107db9a826f4c1b73a6a701cc169e0ba0ca9a4ab38dd8bb26",
+  "command_reference": "Build\\Arcade\\Audio\\scan\\cmd_30.wav",
+  "command_sample_48000": 366594,
+  "audible_delay_seconds": 0.13389583333333333,
+  "rate": 22050,
+  "samples": 232024,
+  "duration_seconds": 10.522630385487528,
+  "raw_sha256": "3aceb516d40156df51bb9e798bf3b99de93de8447e6770d5dcfbb1ae022edd90"
+}

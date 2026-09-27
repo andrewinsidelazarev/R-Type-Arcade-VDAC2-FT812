@@ -1,0 +1,63 @@
+{
+  "format": "pyz80-compiler-v1",
+  "target": {
+    "cpu": "z80",
+    "backend": "sdcc-c",
+    "toolchain": {
+      "kind": "sdcc",
+      "version": "4.6.0",
+      "sha256": "843272575AEAE50E0CDE8B3AC64BCA1386755252D5B12CBB37CFA33F513FFEAE"
+    },
+    "origin": 32768,
+    "bank_size": 16384,
+    "code_pages": [240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255],
+    "stack_budget": 992,
+    "isr_reserve": 32,
+    "ft812": {
+      "mode": "VM_1024_768_59Hz",
+      "width": 1024,
+      "height": 768,
+      "hcycle": 1344,
+      "pclk": 1,
+      "safety_utilization": 0.90,
+      "ram_dl_word_limit": 2048,
+      "cmd_fifo_bytes": 4096,
+      "cmd_fifo_usable": 4092
+    }
+  },
+  "functions": [
+    {
+      "symbol": "rtype_port.game.advance_pitch",
+      "export": "RTypePyCompiled_AdvancePitch",
+      "parameters": [
+        {"name": "pitch", "type": "u16", "minimum": 0, "maximum": 39},
+        {"name": "up", "type": "bool", "minimum": 0, "maximum": 1},
+        {"name": "down", "type": "bool", "minimum": 0, "maximum": 1}
+      ],
+      "return": "u16",
+      "exhaustive": true
+    }
+  ],
+  "call_adapters": [
+    {
+      "entry": "ArcadePlayer_UpdatePitch",
+      "function": "RTypePyCompiled_AdvancePitch",
+      "arguments": [
+        {"kind": "memory_u8", "symbol": "ArcadePlayerPitch"},
+        {
+          "kind": "masked_equals_bool",
+          "symbol": "InputState",
+          "mask": 12,
+          "equals": 4
+        },
+        {
+          "kind": "masked_equals_bool",
+          "symbol": "InputState",
+          "mask": 12,
+          "equals": 8
+        }
+      ],
+      "result": {"kind": "memory_u8", "symbol": "ArcadePlayerPitch"}
+    }
+  ]
+}

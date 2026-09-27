@@ -1,0 +1,207 @@
+{
+  "active_source": {
+    "entrypoint": "rtype_port.app",
+    "launcher": "run_python.cmd",
+    "launcher_sha256": "1ce1200f9df6b3174bfa231241899f234c31122154d43fcee6104f0c885df708",
+    "module": "Source/Python/rtype_port/enemies.py",
+    "module_sha256": "a3314ac64d43adbafc949db77294103fb1ac3a5cad80f7c7a783d86f31210036"
+  },
+  "artifacts": {
+    "header": {
+      "name": "rtype_python_render_order.h",
+      "sha256": "92d57999d68b8ac4b87f8e985dfe2a4739ca5d0de2b6d14350809189ba81ae86",
+      "utf8_bytes": 2628
+    },
+    "source": {
+      "name": "rtype_python_render_order.c",
+      "sha256": "c7c236ded0455a9f7a0c3d501bd979e288ba6d8c70f738c6817a6e6e513f77fb",
+      "utf8_bytes": 7951
+    }
+  },
+  "audited_mutation_inventory": {
+    "count": 6,
+    "kind_counts": {
+      "append-after-bind": 1,
+      "checkpoint-seed": 1,
+      "extend-allocating-pending": 1,
+      "extend-pending-slice": 1,
+      "filtered-survivors": 1,
+      "initialize-empty": 1
+    },
+    "sites": [
+      {
+        "kind": "initialize-empty",
+        "line": 5943,
+        "source": "self.enemies: list[Enemy] = []"
+      },
+      {
+        "kind": "checkpoint-seed",
+        "line": 5958,
+        "source": "self.enemies = [uninitialized, *particles, *cycles]"
+      },
+      {
+        "kind": "append-after-bind",
+        "line": 6082,
+        "source": "self.enemies.append(visual)"
+      },
+      {
+        "kind": "extend-allocating-pending",
+        "line": 6138,
+        "source": "self.enemies.extend(self.pending)"
+      },
+      {
+        "kind": "filtered-survivors",
+        "line": 6211,
+        "source": "self.enemies = survivors"
+      },
+      {
+        "kind": "extend-pending-slice",
+        "line": 6508,
+        "source": "self.enemies.extend(spawned)"
+      }
+    ],
+    "unexpected_mutation_policy": "generation fails closed"
+  },
+  "checkpoint_seed": {
+    "ast_sha256": "bd10225c611a241e8d8f6d8401001ef29a35a1bbc48655b71b4c0eb4fe18d421",
+    "count": 27,
+    "normalized_slot_indices": [
+      53,
+      52,
+      51,
+      50,
+      49,
+      48,
+      47,
+      46,
+      45,
+      44,
+      43,
+      42,
+      41,
+      40,
+      39,
+      38,
+      37,
+      36,
+      35,
+      33,
+      34,
+      32,
+      31,
+      30,
+      29,
+      28,
+      24
+    ],
+    "physical_slots": [
+      4736,
+      4672,
+      4608,
+      4544,
+      4480,
+      4416,
+      4352,
+      4288,
+      4224,
+      4160,
+      4096,
+      4032,
+      3968,
+      3904,
+      3840,
+      3776,
+      3712,
+      3648,
+      3584,
+      3456,
+      3520,
+      3392,
+      3328,
+      3264,
+      3200,
+      3136,
+      2880
+    ],
+    "preserves_python_list_order": true
+  },
+  "draw_order": {
+    "direct_python_list_order": true,
+    "outer_loop_ast_sha256": "fd877c16ed3c9767fa6560ddb996f27618e6e172fdd9262fd9bd061cdd59dfb9",
+    "source_expression": "for enemy in self.enemies"
+  },
+  "format": "pyz80.render-order-backend.v1",
+  "live": false,
+  "normalized_abi": {
+    "failure_atomicity": {
+      "append_remove_replace": "validate before mutation",
+      "extend": [
+        "invalid slot",
+        "duplicate slot",
+        "capacity"
+      ],
+      "filter": [
+        "invalid slot",
+        "non-member slot"
+      ],
+      "seed": [
+        "invalid slot",
+        "duplicate slot",
+        "capacity"
+      ]
+    },
+    "operations": {
+      "append": "preserves Python append order",
+      "checkpoint_seed": "source-derived order",
+      "extend": "atomic and preserves iterable order",
+      "filter": "stable survivor filter by membership mask",
+      "position_of": "O(1) membership/position lookup",
+      "remove": "stable single-slot removal",
+      "replace_same_slot": "keeps the exact list position",
+      "slot_at": "O(1) direct VM-loader lookup"
+    },
+    "state": {
+      "count_bytes": 1,
+      "full_object_copy_required": false,
+      "membership_position_bytes": 96,
+      "none_value": 255,
+      "ordered_slot_index_bytes": 94,
+      "target_bytes": 191
+    }
+  },
+  "prefix": "rtype_python_render_order",
+  "semantic_sha256": "c99c43c2330d7ce377851a61df12d3549d6925358f498f51c8068243faae51e6",
+  "source_derived_pool": {
+    "allocatable_capacity": 94,
+    "allocator_ast_sha256": "0aae45b8e1f6a06de726c47322b4532d9db4498216338b9ac331f4804760a225",
+    "normalization": "(physical_slot - physical_first) / physical_stride",
+    "pending_append_ast_sha256": "b7c86e64ff8204ce321c35d0eafa8d1cfd444007d4f894cabae00bd4bc79500d",
+    "physical_first": 1344,
+    "physical_stop_exclusive": 7488,
+    "physical_stride": 64,
+    "reserved_sentinel_count": 2,
+    "slot_count": 96
+  },
+  "status": "TARGET_NEUTRAL_GENERATED_LIVE_BLOCKED",
+  "verification_contract": {
+    "host_randomized_differential": {
+      "checks_after_every_operation": [
+        "entire list-order hash",
+        "count",
+        "slot_at",
+        "membership",
+        "position"
+      ],
+      "oracle": "Python list of normalized slot indices",
+      "required": true
+    },
+    "live_blockers": [
+      "object fields and class tags are not mapped to target sidecars",
+      "pool allocation/release/replacement sites are not hooked",
+      "draw VM loader is not connected to slot_at",
+      "linked target size, stack bytes and tstates are not certified"
+    ],
+    "live_target_hooks_present": false,
+    "pinned_sdcc_size_status": "Build/rtype_python_render_order_size_status.json"
+  }
+}

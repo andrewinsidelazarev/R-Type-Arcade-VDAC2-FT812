@@ -1,0 +1,5 @@
+; Сгенерировано m72_stage_stream.py; вручную не редактировать.
+M72_STAGE_EVENT_COUNT       EQU 9
+M72_STAGE_EVENT_STREAM_SIZE EQU 860
+M72_STAGE_EVENT_PAGE_COUNT  EQU 1
+M72_STAGE_EVENT_MAX_RECORDS EQU 32

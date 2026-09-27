@@ -1,0 +1,13 @@
+{
+  "source": "Assets\\Converted\\Arcade\\Music\\STAGE1_TSFM.bin",
+  "source_sha256": "f6b9138eaf1cfdc0176c19cb102fb9672634905e64ec9bbc03b974a531b374a2",
+  "renderer": "ymfm-py: two YM2203 at 1.75 MHz",
+  "stream_frames": 11995,
+  "frame_rate": 55,
+  "sample_rate": 44100,
+  "samples": 9617810,
+  "duration_seconds": 218.09092970521542,
+  "normalization_source_peak": 11937.908203125,
+  "pcm_sha256": "b54610a14d7cec89883f62a2db70b8774d95f3149576c1c769abbcd4ed5f6b5a",
+  "preroll_loops": 1
+}

@@ -1,0 +1,360 @@
+
+                ifndef _COPROCESSOR_BUFFER_
+                define _COPROCESSOR_BUFFER_
+   
+                ifndef CMD_ADDRESS_PTR
+                define CMD_ADDRESS_PTR #C000
+                endif
+                ifndef CMD_ADDRESS_END
+                define CMD_ADDRESS_END CMD_ADDRESS_PTR + #1000
+                endif
+
+                define CMD_ADDRESS_NEG (-CMD_ADDRESS_PTR) & 0xFFFF
+
+; -----------------------------------------
+; send the current staging chunk to the FT812 command FIFO and reuse the
+; host staging window.  The FT812 consumes one continuous command stream even
+; when it is delivered by several calls to Write.
+; In :
+;   HL - current BufferPtr (callers may pass anything; memory is authoritative)
+; Out :
+;   HL - CMD_ADDRESS_PTR
+; Corrupt :
+;   none apart from HL, which every buffer append already documents/clobbers
+; -----------------------------------------
+FlushChunk:     PUSH AF
+                PUSH BC
+                PUSH DE
+
+                LD HL, (BufferPtr)
+                LD DE, CMD_ADDRESS_NEG
+                ADD HL, DE
+                LD B, H
+                LD C, L
+                LD A, B
+                OR C
+                JR Z, .Reset
+                LD HL, CMD_ADDRESS_PTR
+                CALL RTypeFT_CmdWriteDMA
+                JR C, .Reset
+                LD A, (RTypePyCommandFlushCount)
+                INC A
+                LD (RTypePyCommandFlushCount), A
+
+.Reset:         LD HL, CMD_ADDRESS_PTR
+                LD (BufferPtr), HL
+                POP DE
+                POP BC
+                POP AF
+                RET
+
+; -----------------------------------------
+; Copy appends an arbitrary byte block and pads it to four bytes.  Flush the
+; previous chunk first when the whole padded block would cross CMD_ADDRESS_END.
+; Project users copy small strings or one 20-byte sprite state record, so a
+; single copied block is required to fit in the configured staging window.
+; -----------------------------------------
+EnsureCopy:     PUSH HL
+                PUSH BC
+                LD HL, (BufferPtr)
+                ADD HL, BC
+                LD A, C
+                NEG
+                AND %00000011
+                LD E, A
+                LD D, #00
+                ADD HL, DE
+                LD A, H
+                CP HIGH CMD_ADDRESS_END
+                JR C, .Fits
+                JR NZ, .Flush
+                LD A, L
+                OR A
+                JR Z, .Fits
+.Flush:         CALL FlushChunk
+.Fits:          POP BC
+                POP HL
+                RET
+
+; -----------------------------------------
+; copy data to CMD buffer with 4-byte alignment
+; In :
+;   HL - address string
+;   BC - length string
+; Out :
+; Corrupt :
+; -----------------------------------------
+Copy:           CALL EnsureCopy
+                LD DE, (BufferPtr)
+                LDIR
+                EX DE, HL
+
+                ; 4-byte alignment (L % 4)
+                LD A, L
+                NEG
+                AND %00000011
+                JR Z, .Aligned
+
+                rept 2
+                LD (HL), C
+                INC HL
+                DEC A
+                JR Z, .Aligned
+                endr
+
+                LD (HL), C
+                INC HL
+                        
+.Aligned        LD (BufferPtr), HL
+
+                RET
+; -----------------------------------------
+; append ColorRGB command to CMD buffer
+; In :
+;   C - red
+;   D - green
+;   E - blue
+; Out :
+; Corrupt :
+;   HL, B
+; -----------------------------------------
+ColorRGB:       LD B, #00
+                SET 2, B
+
+                JR Command_BCDE
+; -----------------------------------------
+; append ColorA command to CMD buffer
+; In :
+;   E - alpha
+; Out :
+; Corrupt :
+;   HL, B
+; -----------------------------------------
+ColorA:         LD BC, #1000
+                LD D, #00
+
+                JR Command_BCDE
+; -----------------------------------------
+; append Vertex2f command to CMD buffer
+; In :
+;   DE - Y
+;   BC - X
+; Out :
+; Corrupt :
+; -----------------------------------------
+Vertex2f:       RL D
+                OR A
+                RR B
+                RR C
+                RR D
+                
+                SET 6, B
+                RES 7, B
+
+                JR Command_BCDE
+; -----------------------------------------
+; append Vertex2ii command to CMD buffer
+; In :
+;   H  - handle [0..31]
+;   L  - cell   [0..127]
+;   DE - Y      [0..512]
+;   BC - X      [0..512]
+; Out :
+; Corrupt :
+; -----------------------------------------
+Vertex2ii:      LD A, C
+                rept 5
+                ADD A, A
+                RL B
+                endr
+                LD C, A
+                
+                LD A, E
+                rept 4
+                ADD A, A
+                RL D
+                endr
+                LD E, A
+
+                LD A, D
+                AND %00011111
+                OR C
+                LD C, A
+                LD D, E
+                
+                RL L
+                RR H
+                RR L
+                LD E, L
+                
+                LD A, H
+                AND %00001111
+                OR D
+                LD D, A
+
+                SET 7, B
+                RES 6, B
+
+                JR Command_BCDE
+; -----------------------------------------
+; append PointSize command to CMD buffer
+; In :
+;   DE - size
+; Out :
+; Corrupt :
+;   HL, B
+; -----------------------------------------
+PointSize:      LD A, D
+                AND #1F
+                LD D, A
+                LD BC, #0D00
+
+                JR Command_BCDE
+; -----------------------------------------
+; append Cell command to CMD buffer
+; In :
+;   A - cell
+; Out :
+; Corrupt :
+;   HL, B
+; -----------------------------------------
+Cell:           AND #7F
+                LD E, A
+                XOR A
+                LD D, A
+                LD C, A
+                LD B, #06
+
+                JR Command_BCDE
+; -----------------------------------------
+; append Text command to CMD buffer
+; In :
+;   HL - X
+;   DE - Y
+;   BC - Options
+;   A  - Font
+; Out :
+; Corrupt :
+;   HL, B
+; Note:
+;   FT_Text macro X?, Y?, Font?, Options?
+; -----------------------------------------
+Text:           PUSH BC
+                PUSH DE
+                PUSH HL
+
+                LD DE, #FF0C
+                LD BC, #FFFF
+                CALL Command_BCDE
+
+                POP DE
+                POP BC
+                CALL Command_BCDE
+
+                POP BC
+                LD E, A
+                LD D, #00
+                JR Command_BCDE
+
+; -----------------------------------------
+; append CMD command to CMD buffer
+; In :
+;   DE - low command
+;   BC - high command
+; Out :
+;   HL
+; Corrupt :
+; -----------------------------------------
+Command_BCDE:   LD HL, (BufferPtr)
+                BIT 6, H
+                CALL NZ, FlushChunk
+
+                LD (HL), E
+                INC HL
+
+                LD (HL), D
+                INC HL
+
+                LD (HL), C
+                INC HL
+
+                LD (HL), B
+                INC HL
+
+                LD (BufferPtr), HL
+                RET
+; -----------------------------------------
+; append Spinner command to CMD buffer
+; In :
+;   HL - X
+;   DE - Y
+;   BC - Scale
+;   A  - Style
+; Out :
+; Corrupt :
+; -----------------------------------------
+Spinner:        PUSH BC
+                PUSH DE
+                PUSH HL
+
+                LD DE, (FT_CMD_SPINNER >> 0)  & 0xFFFF
+                LD BC, (FT_CMD_SPINNER >> 16) & 0xFFFF
+                CALL Command_BCDE
+
+                POP DE
+                POP BC
+                CALL Command_BCDE
+
+                POP BC
+                LD E, A
+                LD D, #00
+                JR Command_BCDE
+; -----------------------------------------
+; append ScrollBar command to CMD buffer
+; In :
+;   SP+0  - x-coordinate of scroll bar top-left, in pixels
+;   SP+2  - y-coordinate of scroll bar top-left, in pixels
+;   SP+4  - width of scroll bar, in pixels. if width is greater than height, the scroll bar is drawn horizontally
+;   SP+6  - height of scroll bar, in pixels. if height is greater than width, the scroll bar is drawn vertically
+;   SP+8  - by default the scroll bar is drawn with a 3D effect and the value of options is zero. options OPT_FLAT remove the 3D effect and its value is 256
+;   SP+10 - displayed value of scroll bar, between 0 and range inclusive
+;   SP+12 - size
+;   SP+14 - maximum value
+; Out :
+; Corrupt :
+; Note:
+;   FT_ScrollBar macro x?, y?, w?, h?, Options?, Value?, Size?, Range?
+; -----------------------------------------
+ScrollBar:      POP HL
+                LD (.ReturnAddress), HL
+
+                ; FT_CMD_BUF FT_CMD_SCROLLBAR
+                LD DE, (FT_CMD_SCROLLBAR >> 0)  & 0xFFFF
+                LD BC, (FT_CMD_SCROLLBAR >> 16) & 0xFFFF
+                CALL Command_BCDE
+
+                ; FT_CMD_BUF ((y?      & 0xFFFF) << 16 | (x?        & 0xFFFF))
+                POP DE
+                POP BC
+                CALL Command_BCDE
+
+                ; FT_CMD_BUF ((h?      & 0xFFFF) << 16 | (w?        & 0xFFFF))
+                POP DE
+                POP BC
+                CALL Command_BCDE
+                ; FT_CMD_BUF ((Value?  & 0xFFFF) << 16 | (Options?  & 0xFFFF))
+                POP DE
+                POP BC
+                CALL Command_BCDE
+
+                ; FT_CMD_BUF ((Range?  & 0xFFFF) << 16 | (Size?     & 0xFFFF))
+                POP DE
+                POP BC
+                CALL Command_BCDE
+            
+.ReturnAddress  EQU $+1
+                JP #0000
+
+BufferPtr:      DW #0000
+
+                endif ; ~_COPROCESSOR_BUFFER_

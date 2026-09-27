@@ -1,0 +1,1080 @@
+{
+  "artifacts": {
+    "header": {
+      "name": "rtype_python_draw_vm.h",
+      "sha256": "b5cd537024ca47a25d08a7b8ec8312ad6a176a06117ad3990c388e99e1bab7e2",
+      "utf8_bytes": 5087
+    },
+    "source": {
+      "name": "rtype_python_draw_vm.c",
+      "sha256": "968831247f601af091ea0b47414722c596a048524b26623d6bdaee5f60865d8c",
+      "utf8_bytes": 22505
+    }
+  },
+  "format": "pyz80.sprite-draw-vm-backend.v2",
+  "lowering": {
+    "actions": [
+      {
+        "condition_pack": 0,
+        "expansion_ordinal": 0,
+        "ordinal": 0,
+        "sink_ordinal": 0
+      },
+      {
+        "condition_pack": 1,
+        "expansion_ordinal": 0,
+        "ordinal": 1,
+        "sink_ordinal": 1
+      },
+      {
+        "condition_pack": 2,
+        "expansion_ordinal": 0,
+        "ordinal": 2,
+        "sink_ordinal": 2
+      },
+      {
+        "condition_pack": 3,
+        "expansion_ordinal": 0,
+        "ordinal": 3,
+        "sink_ordinal": 3
+      },
+      {
+        "condition_pack": 4,
+        "expansion_ordinal": 0,
+        "ordinal": 4,
+        "sink_ordinal": 4
+      },
+      {
+        "condition_pack": 5,
+        "expansion_ordinal": 0,
+        "ordinal": 5,
+        "sink_ordinal": 5
+      },
+      {
+        "condition_pack": 6,
+        "expansion_ordinal": 0,
+        "ordinal": 6,
+        "sink_ordinal": 6
+      },
+      {
+        "condition_pack": 7,
+        "expansion_ordinal": 0,
+        "ordinal": 7,
+        "sink_ordinal": 7
+      },
+      {
+        "condition_pack": 8,
+        "expansion_ordinal": 0,
+        "ordinal": 8,
+        "sink_ordinal": 8
+      },
+      {
+        "condition_pack": 9,
+        "expansion_ordinal": 0,
+        "ordinal": 9,
+        "sink_ordinal": 9
+      },
+      {
+        "condition_pack": 10,
+        "expansion_ordinal": 0,
+        "ordinal": 10,
+        "sink_ordinal": 10
+      },
+      {
+        "condition_pack": 11,
+        "expansion_ordinal": 0,
+        "ordinal": 11,
+        "sink_ordinal": 11
+      },
+      {
+        "condition_pack": 11,
+        "expansion_ordinal": 1,
+        "ordinal": 12,
+        "sink_ordinal": 11
+      },
+      {
+        "condition_pack": 11,
+        "expansion_ordinal": 2,
+        "ordinal": 13,
+        "sink_ordinal": 11
+      },
+      {
+        "condition_pack": 11,
+        "expansion_ordinal": 3,
+        "ordinal": 14,
+        "sink_ordinal": 11
+      },
+      {
+        "condition_pack": 11,
+        "expansion_ordinal": 4,
+        "ordinal": 15,
+        "sink_ordinal": 11
+      },
+      {
+        "condition_pack": 12,
+        "expansion_ordinal": 5,
+        "ordinal": 16,
+        "sink_ordinal": 11
+      },
+      {
+        "condition_pack": 12,
+        "expansion_ordinal": 6,
+        "ordinal": 17,
+        "sink_ordinal": 11
+      },
+      {
+        "condition_pack": 12,
+        "expansion_ordinal": 7,
+        "ordinal": 18,
+        "sink_ordinal": 11
+      },
+      {
+        "condition_pack": 12,
+        "expansion_ordinal": 8,
+        "ordinal": 19,
+        "sink_ordinal": 11
+      },
+      {
+        "condition_pack": 12,
+        "expansion_ordinal": 9,
+        "ordinal": 20,
+        "sink_ordinal": 11
+      },
+      {
+        "condition_pack": 13,
+        "expansion_ordinal": 10,
+        "ordinal": 21,
+        "sink_ordinal": 11
+      },
+      {
+        "condition_pack": 13,
+        "expansion_ordinal": 11,
+        "ordinal": 22,
+        "sink_ordinal": 11
+      },
+      {
+        "condition_pack": 13,
+        "expansion_ordinal": 12,
+        "ordinal": 23,
+        "sink_ordinal": 11
+      },
+      {
+        "condition_pack": 14,
+        "expansion_ordinal": 0,
+        "ordinal": 24,
+        "sink_ordinal": 12
+      },
+      {
+        "condition_pack": 15,
+        "expansion_ordinal": 0,
+        "ordinal": 25,
+        "sink_ordinal": 13
+      },
+      {
+        "condition_pack": 15,
+        "expansion_ordinal": 1,
+        "ordinal": 26,
+        "sink_ordinal": 13
+      },
+      {
+        "condition_pack": 15,
+        "expansion_ordinal": 2,
+        "ordinal": 27,
+        "sink_ordinal": 13
+      },
+      {
+        "condition_pack": 15,
+        "expansion_ordinal": 3,
+        "ordinal": 28,
+        "sink_ordinal": 13
+      },
+      {
+        "condition_pack": 15,
+        "expansion_ordinal": 4,
+        "ordinal": 29,
+        "sink_ordinal": 13
+      },
+      {
+        "condition_pack": 15,
+        "expansion_ordinal": 5,
+        "ordinal": 30,
+        "sink_ordinal": 13
+      },
+      {
+        "condition_pack": 15,
+        "expansion_ordinal": 6,
+        "ordinal": 31,
+        "sink_ordinal": 13
+      },
+      {
+        "condition_pack": 16,
+        "expansion_ordinal": 0,
+        "ordinal": 32,
+        "sink_ordinal": 14
+      },
+      {
+        "condition_pack": 17,
+        "expansion_ordinal": 0,
+        "ordinal": 33,
+        "sink_ordinal": 15
+      }
+    ],
+    "loop_order": [
+      {
+        "action_count": 33,
+        "action_ordinals": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32
+        ],
+        "first_action": 0,
+        "kind": "objects",
+        "loop_id": "loop_0"
+      },
+      {
+        "action_count": 1,
+        "action_ordinals": [
+          33
+        ],
+        "first_action": 33,
+        "kind": "transients",
+        "loop_id": "loop_1"
+      }
+    ]
+  },
+  "normalized_abi": {
+    "class_identity": {
+      "ast_class_graph_sha256": "5f07d334c64fad862478f2a71eee07dbd9d681e421e8c1cf1e2b142aac331a87",
+      "bit_bytes": 4,
+      "encoding": "isinstance-bitset-lsb0",
+      "local_class_memberships": [
+        {
+          "concrete_class": "Animated86A6",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "AttachedAC4C",
+          "isinstance_tags": [
+            "AttachedAC4C"
+          ]
+        },
+        {
+          "concrete_class": "BackgroundParticleE5CD",
+          "isinstance_tags": [
+            "BackgroundParticleE5CD"
+          ]
+        },
+        {
+          "concrete_class": "BossB7FBController",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "BossB7FBCore",
+          "isinstance_tags": [
+            "BossB7FBCore"
+          ]
+        },
+        {
+          "concrete_class": "BossB7FBCoreChild",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "BossB7FBMissile",
+          "isinstance_tags": [
+            "BossB7FBMissile"
+          ]
+        },
+        {
+          "concrete_class": "BossB7FBMissileSpawner",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "BossB7FBRandomChild",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "BossB7FBRandomSpawner",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "BossB7FBSegment",
+          "isinstance_tags": [
+            "BossB7FBSegment"
+          ]
+        },
+        {
+          "concrete_class": "Child8D85",
+          "isinstance_tags": [
+            "Child8D85"
+          ]
+        },
+        {
+          "concrete_class": "CleanupTimerF477",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "DebrisAEFB",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "DobkeratopsArenaAnchor",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "DobkeratopsBack",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "DobkeratopsBody",
+          "isinstance_tags": [
+            "DobkeratopsBody"
+          ]
+        },
+        {
+          "concrete_class": "DobkeratopsDebrisE700",
+          "isinstance_tags": [
+            "ExplosionEffect"
+          ]
+        },
+        {
+          "concrete_class": "DobkeratopsOrb",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "DobkeratopsOrbTrail",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "DobkeratopsRoot",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "DobkeratopsTentacle",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "Enemy",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "Enemy5CEA",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "Enemy5EED",
+          "isinstance_tags": [
+            "Enemy5EED"
+          ]
+        },
+        {
+          "concrete_class": "Enemy6F89",
+          "isinstance_tags": [
+            "Enemy6F89"
+          ]
+        },
+        {
+          "concrete_class": "Enemy7182",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "Enemy7294",
+          "isinstance_tags": [
+            "Enemy7294"
+          ]
+        },
+        {
+          "concrete_class": "Enemy7D68",
+          "isinstance_tags": [
+            "Enemy7D68"
+          ]
+        },
+        {
+          "concrete_class": "Enemy8469",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "Enemy8561",
+          "isinstance_tags": [
+            "Enemy8561"
+          ]
+        },
+        {
+          "concrete_class": "Enemy8F5E",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "EnemyProjectile",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "ExplosionE7BE",
+          "isinstance_tags": [
+            "ExplosionEffect"
+          ]
+        },
+        {
+          "concrete_class": "ExplosionEffect",
+          "isinstance_tags": [
+            "ExplosionEffect"
+          ]
+        },
+        {
+          "concrete_class": "FinalProjectile9660",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "FinalSpawner9660",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "FixedLarge6E9B",
+          "isinstance_tags": [
+            "FixedLarge6E9B"
+          ]
+        },
+        {
+          "concrete_class": "Formation78F8Child",
+          "isinstance_tags": [
+            "Formation78F8Child"
+          ]
+        },
+        {
+          "concrete_class": "Formation78F8Parent",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "FormationChild",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "FormationParent",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "GroundWalker",
+          "isinstance_tags": [
+            "GroundWalker"
+          ]
+        },
+        {
+          "concrete_class": "Handler5CEAShot",
+          "isinstance_tags": [
+            "Handler5CEAShot"
+          ]
+        },
+        {
+          "concrete_class": "Handler60BA",
+          "isinstance_tags": [
+            "Handler60BA"
+          ]
+        },
+        {
+          "concrete_class": "Handler60BAChild",
+          "isinstance_tags": [
+            "Handler60BAChild"
+          ]
+        },
+        {
+          "concrete_class": "Handler60BAProjectile",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "InvulnerabilityTimerF44E",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "LargeTerrain74B4",
+          "isinstance_tags": [
+            "LargeTerrain74B4"
+          ]
+        },
+        {
+          "concrete_class": "LargeTerrainChild780E",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "M72EnemyWorld",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "M72ObjectPool",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "M72PendingList",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "M72ResourceManager",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "M72Rng",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "M72Rom",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "M72SpriteAtlas",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "Multipart915BChild",
+          "isinstance_tags": [
+            "Multipart915BChild"
+          ]
+        },
+        {
+          "concrete_class": "Multipart915BParent",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "MultipartA71DBody",
+          "isinstance_tags": [
+            "MultipartA71DBody"
+          ]
+        },
+        {
+          "concrete_class": "MultipartA71DController",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "PaletteCycleFBED",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "ParticleControllerE4A5",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "PlayerShotVisual4EAF",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "PlayerTargeting80E3",
+          "isinstance_tags": [
+            "PlayerTargeting80E3"
+          ]
+        },
+        {
+          "concrete_class": "Projectile7435",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "Radial95F1",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "RedFlyer",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "ScriptedMotion",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "Spawner875D",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "Spawner875DChild",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "SpriteDescriptor",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "StageEvent",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "StageObject8C12",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "StageTransitionF1BF",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "Targeting80E3AttackFlash",
+          "isinstance_tags": [
+            "Targeting80E3AttackFlash"
+          ]
+        },
+        {
+          "concrete_class": "Targeting80E3Projectile",
+          "isinstance_tags": [
+            "Targeting80E3Projectile"
+          ]
+        },
+        {
+          "concrete_class": "TerrainAware897E",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "TerrainBound55E9",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "TerrainEnemy696E",
+          "isinstance_tags": [
+            "TerrainEnemy696E"
+          ]
+        },
+        {
+          "concrete_class": "TerrainModifierChild6C37",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "TerrainModifierParent6ACB",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "TerrainModifierProjectile6E27",
+          "isinstance_tags": []
+        },
+        {
+          "concrete_class": "TimedControlF3C1",
+          "isinstance_tags": []
+        }
+      ],
+      "tags": [
+        {
+          "name": "AttachedAC4C",
+          "tag": 0
+        },
+        {
+          "name": "BackgroundParticleE5CD",
+          "tag": 1
+        },
+        {
+          "name": "BossB7FBCore",
+          "tag": 2
+        },
+        {
+          "name": "BossB7FBMissile",
+          "tag": 3
+        },
+        {
+          "name": "BossB7FBSegment",
+          "tag": 4
+        },
+        {
+          "name": "Child8D85",
+          "tag": 5
+        },
+        {
+          "name": "DobkeratopsBody",
+          "tag": 6
+        },
+        {
+          "name": "Enemy5EED",
+          "tag": 7
+        },
+        {
+          "name": "Enemy6F89",
+          "tag": 8
+        },
+        {
+          "name": "Enemy7294",
+          "tag": 9
+        },
+        {
+          "name": "Enemy7D68",
+          "tag": 10
+        },
+        {
+          "name": "Enemy8561",
+          "tag": 11
+        },
+        {
+          "name": "ExplosionEffect",
+          "tag": 12
+        },
+        {
+          "name": "FixedLarge6E9B",
+          "tag": 13
+        },
+        {
+          "name": "Formation78F8Child",
+          "tag": 14
+        },
+        {
+          "name": "GroundWalker",
+          "tag": 15
+        },
+        {
+          "name": "Handler5CEAShot",
+          "tag": 16
+        },
+        {
+          "name": "Handler60BA",
+          "tag": 17
+        },
+        {
+          "name": "Handler60BAChild",
+          "tag": 18
+        },
+        {
+          "name": "LargeTerrain74B4",
+          "tag": 19
+        },
+        {
+          "name": "Multipart915BChild",
+          "tag": 20
+        },
+        {
+          "name": "MultipartA71DBody",
+          "tag": 21
+        },
+        {
+          "name": "PlayerTargeting80E3",
+          "tag": 22
+        },
+        {
+          "name": "Targeting80E3AttackFlash",
+          "tag": 23
+        },
+        {
+          "name": "Targeting80E3Projectile",
+          "tag": 24
+        },
+        {
+          "name": "TerrainEnemy696E",
+          "tag": 25
+        }
+      ]
+    },
+    "failure_atomicity": {
+      "capacity_failure_atomic": true,
+      "object_loader_failure_during_preflight_atomic": true,
+      "preflight": "count-and-range with one object-loader call per object; without resolvers, emitters or output writes",
+      "preflight_expression_callback_node_count": 0,
+      "preflight_object_loader_calls": "object_count-on-success",
+      "produce_non_ok_output_buffer_unchanged": true
+    },
+    "object_view": {
+      "exact_target_size_bytes": 28,
+      "field_storage_bytes_without_target_padding": 28,
+      "fields": [
+        {
+          "c_type": "uint16_t",
+          "kind": "unsigned_scalar",
+          "name": "active_palette"
+        },
+        {
+          "c_type": "uint16_t",
+          "kind": "string_state",
+          "name": "body_kind",
+          "other_tag": 0,
+          "string_values": [
+            "middle",
+            "upper"
+          ]
+        },
+        {
+          "c_type": "uint16_t",
+          "kind": "unsigned_scalar",
+          "name": "descriptor"
+        },
+        {
+          "c_type": "uint16_t",
+          "kind": "string_state",
+          "name": "effect",
+          "other_tag": 0,
+          "string_values": [
+            "e817"
+          ]
+        },
+        {
+          "c_type": "uint16_t",
+          "kind": "unsigned_scalar",
+          "name": "overlay_descriptor"
+        },
+        {
+          "c_type": "int16_t",
+          "kind": "signed_scalar",
+          "name": "overlay_x"
+        },
+        {
+          "c_type": "int16_t",
+          "kind": "signed_scalar",
+          "name": "overlay_y"
+        },
+        {
+          "c_type": "uint16_t",
+          "kind": "unsigned_scalar",
+          "name": "palette"
+        },
+        {
+          "c_type": "uint8_t",
+          "kind": "boolean",
+          "name": "render_ready",
+          "normalized_getattr_default": true
+        },
+        {
+          "c_type": "uint16_t",
+          "kind": "string_state",
+          "name": "state",
+          "other_tag": 0,
+          "string_values": [
+            "first"
+          ]
+        },
+        {
+          "c_type": "uint8_t",
+          "kind": "boolean",
+          "name": "visible"
+        },
+        {
+          "c_type": "int16_t",
+          "kind": "signed_scalar",
+          "name": "x"
+        },
+        {
+          "c_type": "int16_t",
+          "kind": "signed_scalar",
+          "name": "y"
+        }
+      ],
+      "full_pool_materialization_required": false,
+      "input_shape": "provider-or-contiguous-normalized-array",
+      "layout_owner": "target-layout-adapter",
+      "live_adapter_requirement": "implement the source-derived target object mapping behind load_object; never materialize the whole pool",
+      "live_materialization_certified": false,
+      "live_target_layout_mapping_certified": false,
+      "provider": {
+        "abi_precondition": "deterministic and stable for both passes; does not mutate resolver or emitter behavior",
+        "callback": "uint8_t (*)(void *context, uint16_t object_index, rtype_python_draw_vm_object_view *object_out)",
+        "calls_per_item_per_pass": 1,
+        "failure_attempts_for_index_i_during_preflight": "i + 1",
+        "failure_before_first_output": true,
+        "resolver_or_emitter_calls_before_preflight_failure": 0,
+        "selection": "load_object when non-null, otherwise contiguous objects fallback",
+        "successful_calls_per_emission_pass": "object_count",
+        "successful_calls_per_preflight_pass": "object_count",
+        "successful_calls_per_produce_or_stream": "2 * object_count"
+      },
+      "single_working_view_abi_certified": true,
+      "working_view_bytes": 28,
+      "working_view_count": 1
+    },
+    "output_record": {
+      "fields": [
+        {
+          "c_type": "uint16_t",
+          "name": "bank_key",
+          "offset": 0
+        },
+        {
+          "c_type": "uint16_t",
+          "name": "descriptor",
+          "offset": 2
+        },
+        {
+          "c_type": "int16_t",
+          "name": "anchor_x",
+          "offset": 4
+        },
+        {
+          "c_type": "int16_t",
+          "name": "anchor_y",
+          "offset": 6
+        }
+      ],
+      "size": 8
+    },
+    "resolvers": {
+      "bank_key": {
+        "abi_precondition": "total, deterministic, nonmutating",
+        "callback": "uint16_t (*)(void *context, uint16_t palette, uint16_t resource_type)",
+        "operation": "palette-resource-type-to-bank-key"
+      },
+      "evaluation_order": "left-to-right-before-bank-key",
+      "resource_type": {
+        "abi_precondition": "total, deterministic, nonmutating",
+        "callback": "uint16_t (*)(void *context, uint16_t palette)",
+        "operation": "palette-to-resource-type"
+      }
+    },
+    "streaming": {
+      "emitter_failure_reports_accepted_prefix": true,
+      "emitter_precondition": "does not mutate input views or resolver behavior",
+      "function": "rtype_python_draw_vm_stream",
+      "order": "strict-active-Python-loop-order",
+      "preflight_before_first_emission": true,
+      "record_array_required": false
+    },
+    "transient_tuple_view": {
+      "fields": [
+        {
+          "c_type": "uint16_t",
+          "name": "descriptor"
+        },
+        {
+          "c_type": "uint16_t",
+          "name": "palette"
+        },
+        {
+          "c_type": "uint16_t",
+          "name": "resource_type"
+        },
+        {
+          "c_type": "int16_t",
+          "name": "x"
+        },
+        {
+          "c_type": "int16_t",
+          "name": "y"
+        }
+      ]
+    }
+  },
+  "plan": {
+    "action_count": 34,
+    "format": "pyz80.sprite-draw-plan.v1",
+    "method_ast_sha256": "25b4446b52c9b84bdfd9fd6f61bf660b8ff3e539444d4a84023a9bfad0429f99",
+    "semantic_sha256": "8deb7410b166f70abea16a78a5cb472952871c068dde1d17efde1de9356119c8",
+    "sink_order_sha256": "357de96084aa3239e1cc2579ba31fd72d3895a0a8365451a8f5ecfe696c651a9",
+    "source_path": "Source/Python/rtype_port/enemies.py",
+    "source_sha256": "a3314ac64d43adbafc949db77294103fb1ac3a5cad80f7c7a783d86f31210036",
+    "symbol": "rtype_port.enemies.M72EnemyWorld.draw"
+  },
+  "verification_contract": {
+    "certification_blockers": [
+      "source-derived target object fields are not mapped into the provider",
+      "pinned SDCC stack-byte bound is not proved",
+      "live FT812 integration timing is not proved"
+    ],
+    "host_semantics": {
+      "method": "compile-run and compare entire record stream plus all 34 action coverage against SpriteDrawPlanIR oracle",
+      "required": true
+    },
+    "live_target_performance_and_size_certified": false,
+    "live_z80_tstates": null,
+    "logical_recursion_depth_is_not_stack_byte_certificate": true,
+    "pinned_sdcc": {
+      "required_before_live_use": true,
+      "scope": "generated source code/data section measurement"
+    },
+    "pinned_sdcc_stack_bytes": null
+  },
+  "vm": {
+    "class_mask_deduplication": true,
+    "condition_pack_deduplication": true,
+    "counts": {
+      "actions": 34,
+      "callback_reachable_nodes": 1,
+      "class_masks": 17,
+      "condition_ids": 89,
+      "condition_packs": 18,
+      "constants": 24,
+      "loops": 2,
+      "nodes": 79
+    },
+    "encoding": "fixed-4-byte-dag-nodes-u8-identifiers",
+    "integer_semantics": {
+      "all_additions_interval_proved_no_signed_overflow": true,
+      "evaluation_type": "int32_t"
+    },
+    "limits": {
+      "fail_closed": true,
+      "max_each_u8_inventory": 255
+    },
+    "logical_table_bytes": {
+      "actions": 204,
+      "class_masks": 68,
+      "condition_ids": 89,
+      "condition_packs": 36,
+      "constants": 96,
+      "loops": 6,
+      "nodes": 316,
+      "total": 815
+    },
+    "max_recursive_eval_depth": 4,
+    "opcodes": [
+      {
+        "name": "CONST",
+        "opcode": 0
+      },
+      {
+        "name": "OBJECT_FIELD",
+        "opcode": 1
+      },
+      {
+        "name": "TRANSIENT_FIELD",
+        "opcode": 2
+      },
+      {
+        "name": "CLASS_ANY",
+        "opcode": 3
+      },
+      {
+        "name": "NOT",
+        "opcode": 4
+      },
+      {
+        "name": "AND",
+        "opcode": 5
+      },
+      {
+        "name": "ADD",
+        "opcode": 6
+      },
+      {
+        "name": "EQUAL",
+        "opcode": 7
+      },
+      {
+        "name": "NOT_EQUAL",
+        "opcode": 8
+      },
+      {
+        "name": "SELECT",
+        "opcode": 9
+      },
+      {
+        "name": "RESOURCE_TYPE",
+        "opcode": 10
+      }
+    ],
+    "short_circuit": [
+      "AND",
+      "SELECT",
+      "condition-pack"
+    ]
+  }
+}

@@ -1,0 +1,787 @@
+{
+ "description": "Оригиналы эффектов R-Type World: звучащие части записей MAME 0.288 по одной звуковой команде (скан Build/Arcade/Audio/scan), без обработки. Команды — те, что шлёт ROM.",
+ "sounding": {
+  "0x30": {
+   "file": "rtype_sfx_30.wav",
+   "rate": 48000,
+   "samples": 11321,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.23585416666666667,
+   "peak": 2397.0,
+   "rms": 1469.2802886003042,
+   "sha256": "22fbab43088c3ae8232fd447bb41727db19c3a4c185e7f73abc6ee735f2369dd",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_30.wav",
+    "sha256": "26ac986f7b2d6f223dddf4436af686629e5822105ac899a6a0ef496e394d1866",
+    "start_sample": 366378,
+    "samples": 11321,
+    "catalog_peak": 2397.0
+   }
+  },
+  "0x31": {
+   "file": "rtype_sfx_31.wav",
+   "rate": 48000,
+   "samples": 24231,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.5048125,
+   "peak": 3818.0,
+   "rms": 2141.2052272356677,
+   "sha256": "306a9b776685f42b161c0f396750496e17dabff2e4d015d60d88fd01afc076dc",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_31.wav",
+    "sha256": "d7a1b58d08c9f047636afafa9a86561214ddaf4d042b1f66257622503988b926",
+    "start_sample": 366377,
+    "samples": 24231,
+    "catalog_peak": 3818.0
+   }
+  },
+  "0x32": {
+   "file": "rtype_sfx_32.wav",
+   "rate": 48000,
+   "samples": 166869,
+   "start_seconds": 0.0,
+   "duration_seconds": 3.4764375,
+   "peak": 2467.0,
+   "rms": 916.2404638023603,
+   "sha256": "1094e4da1811c5a8e032ad3a94f61579840ea59b356f9c73065af48652604bd5",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_32.wav",
+    "sha256": "789808116c70742b4ca796f4190852f7f0e61240319ab8197c42bd1169e8f685",
+    "start_sample": 373611,
+    "samples": 166869,
+    "catalog_peak": 2467.0
+   }
+  },
+  "0x34": {
+   "file": "rtype_sfx_34.wav",
+   "rate": 48000,
+   "samples": 49532,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.0319166666666666,
+   "peak": 2304.0,
+   "rms": 749.6058646338533,
+   "sha256": "e83329199e041c102de1e944513b2dbbbb2716c20a081cc27d92530cb5aa1053",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_34.wav",
+    "sha256": "18c2988063c584076750e90632a84e7bc25fb5bb0b8a9104271b1c79cd7e3382",
+    "start_sample": 366404,
+    "samples": 49532,
+    "catalog_peak": 2304.0
+   }
+  },
+  "0x35": {
+   "file": "rtype_sfx_35.wav",
+   "rate": 48000,
+   "samples": 52460,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.0929166666666668,
+   "peak": 6729.0,
+   "rms": 2822.5431889264223,
+   "sha256": "096a44fa69ea3f73182c1020f2ac28ada683ff3765faab4f302a5b1465439780",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_35.wav",
+    "sha256": "8f54865c9a626ec409d2c45b6c0dcb4028d4da454a0ed16577694486a73c2f00",
+    "start_sample": 366580,
+    "samples": 52460,
+    "catalog_peak": 6729.0
+   }
+  },
+  "0x36": {
+   "file": "rtype_sfx_36.wav",
+   "rate": 48000,
+   "samples": 15705,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.3271875,
+   "peak": 1789.0,
+   "rms": 878.8876792955821,
+   "sha256": "d3c9dff4977f1ffcf43d3de1001e32f14e28fd51e9a03ba8e5f996bb1f184804",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_36.wav",
+    "sha256": "0ba8b23c4f5ad059a9a6f213e60bfff9687bdf351e832dd99105d13a60c50178",
+    "start_sample": 366385,
+    "samples": 15705,
+    "catalog_peak": 1789.0
+   }
+  },
+  "0x37": {
+   "file": "rtype_sfx_37.wav",
+   "rate": 48000,
+   "samples": 31866,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.663875,
+   "peak": 3253.0,
+   "rms": 1113.2592220282152,
+   "sha256": "4a7a4e0f14f096e50f711bb1eae265a854f19b475f02f55b7cc06686745625cf",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_37.wav",
+    "sha256": "7f2003fa118f8824940b84d63dbcf8c4e05031ce9e62fc01c12080af0b2fb940",
+    "start_sample": 367184,
+    "samples": 31866,
+    "catalog_peak": 3253.0
+   }
+  },
+  "0x38": {
+   "file": "rtype_sfx_38.wav",
+   "rate": 48000,
+   "samples": 55709,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.1606041666666667,
+   "peak": 6574.0,
+   "rms": 1997.585744493128,
+   "sha256": "c1a909475b7e3a26aa9aca0abd8df07d866aa6d6c51b87949e4026856e222c33",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_38.wav",
+    "sha256": "b09c8cded4f42518cc16e80ed4a8925565fbab5017c3ec623ff56b5f297bcac0",
+    "start_sample": 366392,
+    "samples": 55709,
+    "catalog_peak": 6574.0
+   }
+  },
+  "0x3A": {
+   "file": "rtype_sfx_3A.wav",
+   "rate": 48000,
+   "samples": 32679,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.6808125,
+   "peak": 3075.0,
+   "rms": 1754.9490594227932,
+   "sha256": "9483a9ac845b29ec1fe143cca44180046391f2e7b918d14db074ff40ff4fc374",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_3A.wav",
+    "sha256": "64ea3430537cbac61384fce279a18f10d077c0cfd52f2fa041fb67ce3c044ce2",
+    "start_sample": 366372,
+    "samples": 32679,
+    "catalog_peak": 3075.0
+   }
+  },
+  "0x3B": {
+   "file": "rtype_sfx_3B.wav",
+   "rate": 48000,
+   "samples": 49408,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.0293333333333334,
+   "peak": 1190.0,
+   "rms": 396.7004866254798,
+   "sha256": "82fd38d5ed69fcb91dc9ab9d73f29c4a9d3f2f74f29e41347cb1d2028af7bf95",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_3B.wav",
+    "sha256": "077aaf5c626680d3174c7959fd9c4b877c69d95d82eb275525fb16be6b847a26",
+    "start_sample": 366397,
+    "samples": 49408,
+    "catalog_peak": 1190.0
+   }
+  },
+  "0x3C": {
+   "file": "rtype_sfx_3C.wav",
+   "rate": 48000,
+   "samples": 31692,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.66025,
+   "peak": 4345.0,
+   "rms": 1061.738306643173,
+   "sha256": "d0db1f38c3a566a3963fa31c65de0879fe79af7acb9a67265ac2e29442b7e969",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_3C.wav",
+    "sha256": "88741303c6ab1c00c31927838da24067fdbb4c59d603f1e3b7ed806df25d0dbf",
+    "start_sample": 367349,
+    "samples": 31692,
+    "catalog_peak": 4345.0
+   }
+  },
+  "0x3D": {
+   "file": "rtype_sfx_3D.wav",
+   "rate": 48000,
+   "samples": 44778,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.932875,
+   "peak": 3353.0,
+   "rms": 1057.2924938381357,
+   "sha256": "ddce60d794f48b7bffe7691ebc0db2c890f2d37d4529fd8a5504fa5a78a123bd",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_3D.wav",
+    "sha256": "79031d1ec72c5fba8b7ad521e9999923402570b0fa61730e1ab86d4eb7b2a15e",
+    "start_sample": 366567,
+    "samples": 44778,
+    "catalog_peak": 3353.0
+   }
+  },
+  "0x3F": {
+   "file": "rtype_sfx_3F.wav",
+   "rate": 48000,
+   "samples": 43395,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.9040625,
+   "peak": 1519.0,
+   "rms": 794.8290307413471,
+   "sha256": "99617808a418f970d4ac7d7f77f38ee55a85396258fc1ab3aba9c0cb51783dfe",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_3F.wav",
+    "sha256": "d827da42e010cd65dfa390e37ce9f3cfda1236429869d5336de4eb7424543652",
+    "start_sample": 366387,
+    "samples": 43395,
+    "catalog_peak": 1519.0
+   }
+  },
+  "0x40": {
+   "file": "rtype_sfx_40.wav",
+   "rate": 48000,
+   "samples": 9595,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.19989583333333333,
+   "peak": 2862.0,
+   "rms": 1894.1381301454417,
+   "sha256": "7afc7bb5fe436d77ccf754b3296b990810daca9ccebffb2f070918780f5ba2f3",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_40.wav",
+    "sha256": "01b2e9d1437097eb45adb30cb10e793dbfd744f80faa1150eb8ef439e1b39c0e",
+    "start_sample": 366368,
+    "samples": 9595,
+    "catalog_peak": 2862.0
+   }
+  },
+  "0x41": {
+   "file": "rtype_sfx_41.wav",
+   "rate": 48000,
+   "samples": 11960,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.24916666666666668,
+   "peak": 3442.0,
+   "rms": 1999.795394404539,
+   "sha256": "38e402e69c58c2a1e45dfacb7d6b5ccb4e02f704ec77e141cbd06f71f8ee5964",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_41.wav",
+    "sha256": "e5b6c416f2c6f615bf35aba0fccac08a3419d7eb345bb6e244b17be3e75420ef",
+    "start_sample": 367089,
+    "samples": 11960,
+    "catalog_peak": 3442.0
+   }
+  },
+  "0x50": {
+   "file": "rtype_sfx_50.wav",
+   "rate": 48000,
+   "samples": 23558,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.4907916666666667,
+   "peak": 3251.0,
+   "rms": 830.73912540683,
+   "sha256": "6a3605897be95549ef6b28c6cb9c1cf4f82a1bcd6386a529242a323db5fe5094",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_50.wav",
+    "sha256": "2249d35d2c0ac063feadc7706ca6f44668e1c6761fb7cd5874d3b2ff84e0493b",
+    "start_sample": 367386,
+    "samples": 23558,
+    "catalog_peak": 3251.0
+   }
+  },
+  "0x51": {
+   "file": "rtype_sfx_51.wav",
+   "rate": 48000,
+   "samples": 32674,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.6807083333333334,
+   "peak": 2552.0,
+   "rms": 1425.7513633136805,
+   "sha256": "e91b3e468b0de400e2866c390c6ec9c2dbfc0749451399052a8fe52babf80210",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_51.wav",
+    "sha256": "a815dcb11330f5affcec6ab3eec40c5d3a99cede7664c0f01a750e2a96d2529f",
+    "start_sample": 366372,
+    "samples": 32674,
+    "catalog_peak": 2552.0
+   }
+  },
+  "0x52": {
+   "file": "rtype_sfx_52.wav",
+   "rate": 48000,
+   "samples": 27744,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.578,
+   "peak": 3184.0,
+   "rms": 2187.488192858232,
+   "sha256": "c6174ff43ce4a5b7c4923582b5fd47c476c48ce44b435152844dd2b6caad6a11",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_52.wav",
+    "sha256": "5d8dec9995d53791c6208d7c57ec200cae7e16930058c581dbb2a504e7992d98",
+    "start_sample": 366697,
+    "samples": 27744,
+    "catalog_peak": 3184.0
+   }
+  },
+  "0x53": {
+   "file": "rtype_sfx_53.wav",
+   "rate": 48000,
+   "samples": 32190,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.670625,
+   "peak": 2492.0,
+   "rms": 1382.2180494152262,
+   "sha256": "9a19abdde6872e932a9872bd6892eda1e21377c486fd41c8b6cdd1025a1f7977",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_53.wav",
+    "sha256": "4d9afeecb1b506703e9550f35eac0022e8e2498250b82ef466f038ad63efbb23",
+    "start_sample": 366595,
+    "samples": 32190,
+    "catalog_peak": 2492.0
+   }
+  },
+  "0x54": {
+   "file": "rtype_sfx_54.wav",
+   "rate": 48000,
+   "samples": 17789,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.3706041666666667,
+   "peak": 3251.0,
+   "rms": 794.5293870444842,
+   "sha256": "71be8fcf0b0deffc5c2254a57c66ebb5e7ae712d958f3f14b445e7f55e3836b7",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_54.wav",
+    "sha256": "a04e45254baac29575fe43329037c38f014b5b264cd9f3eb8e06db4762ee5a01",
+    "start_sample": 367386,
+    "samples": 17789,
+    "catalog_peak": 3251.0
+   }
+  },
+  "0x55": {
+   "file": "rtype_sfx_55.wav",
+   "rate": 48000,
+   "samples": 5862,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.122125,
+   "peak": 4302.0,
+   "rms": 758.8112178576694,
+   "sha256": "78bfa47061c6644e2afaf71f73e9c2870198f401df4d128279ca66e2eb7dbd00",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_55.wav",
+    "sha256": "74daf08d95fd47ec7f15a8ee18661b37374e89246b85f47aba2da07e471711de",
+    "start_sample": 366971,
+    "samples": 5862,
+    "catalog_peak": 4302.0
+   }
+  },
+  "0x56": {
+   "file": "rtype_sfx_56.wav",
+   "rate": 48000,
+   "samples": 3434,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.07154166666666667,
+   "peak": 4303.0,
+   "rms": 1553.72825612611,
+   "sha256": "7bf405d35eeb75cd1d4f21aded45011c5d26c3f8bcc8ed78fd4fd70a316197ce",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_56.wav",
+    "sha256": "62a97f34f3846f80e13057bd2270ccee916f7ad77c501981433fc7b595cadabe",
+    "start_sample": 366369,
+    "samples": 3434,
+    "catalog_peak": 4303.0
+   }
+  },
+  "0x57": {
+   "file": "rtype_sfx_57.wav",
+   "rate": 48000,
+   "samples": 13445,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.28010416666666665,
+   "peak": 2411.0,
+   "rms": 1559.3459181021929,
+   "sha256": "10954a87ebf8e4c301107123372f084899387653614aba10608792db1127e822",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_57.wav",
+    "sha256": "162a6f775d838d94fe3b2af6e6217d21d160407098fbc9b64fa886d323e653d0",
+    "start_sample": 366377,
+    "samples": 13445,
+    "catalog_peak": 2411.0
+   }
+  },
+  "0x59": {
+   "file": "rtype_sfx_59.wav",
+   "rate": 48000,
+   "samples": 14949,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.3114375,
+   "peak": 3105.0,
+   "rms": 1166.2907804492156,
+   "sha256": "45e484272f4c507c81a2d5c67acbe0a5049f59029182357c4a1a23d45d227c3b",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_59.wav",
+    "sha256": "7a9835d34c0de1e013696a5b4f3bdeb947dd57486b5be68ecd0fb804abc8981d",
+    "start_sample": 366384,
+    "samples": 14949,
+    "catalog_peak": 3105.0
+   }
+  },
+  "0x5A": {
+   "file": "rtype_sfx_5A.wav",
+   "rate": 48000,
+   "samples": 95669,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.9931041666666667,
+   "peak": 3334.0,
+   "rms": 1499.464118393697,
+   "sha256": "7936d29793df6f53c56a0c3ad73a4126d839020755aefaec9c0870bcbde986ce",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_5A.wav",
+    "sha256": "62a97812ec8fa4f09bbf399104f3c04f05fa15d20e39ddf5239aabbc291b41d4",
+    "start_sample": 366409,
+    "samples": 95669,
+    "catalog_peak": 3334.0
+   }
+  },
+  "0x5D": {
+   "file": "rtype_sfx_5D.wav",
+   "rate": 48000,
+   "samples": 40318,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.8399583333333334,
+   "peak": 2981.0,
+   "rms": 884.3747673517314,
+   "sha256": "d18174463b26aa20c2f9e8a47b16b023ed3c45d0bd27c752471b8f7d89451e37",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_5D.wav",
+    "sha256": "db1a6baaad1c39a870ee60099fd31b82d8bbaf8cb4e9c4fb98f703c4d81abdae",
+    "start_sample": 366381,
+    "samples": 40318,
+    "catalog_peak": 2981.0
+   }
+  },
+  "0x5E": {
+   "file": "rtype_sfx_5E.wav",
+   "rate": 48000,
+   "samples": 5406,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.112625,
+   "peak": 2372.0,
+   "rms": 885.147266560664,
+   "sha256": "4089dc106ab07879c6a445ccb2f37db396733da36ce7187e397163fbf63dfec0",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_5E.wav",
+    "sha256": "c8cb4a81f068d559967900e668114ec781254d17e7ffa961adf109fd79df160e",
+    "start_sample": 367469,
+    "samples": 5406,
+    "catalog_peak": 2372.0
+   }
+  },
+  "0x5F": {
+   "file": "rtype_sfx_5F.wav",
+   "rate": 48000,
+   "samples": 25741,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.5362708333333334,
+   "peak": 2819.0,
+   "rms": 1435.585249041197,
+   "sha256": "88085eca3c329442f8a20b370991bf097067e682e88317095f1b8e5a9494fe65",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_5F.wav",
+    "sha256": "77f3b7b83aebd4c09050654110d5a3a81cf18d409672d43453f59747d276a739",
+    "start_sample": 366378,
+    "samples": 25741,
+    "catalog_peak": 2819.0
+   }
+  },
+  "0x61": {
+   "file": "rtype_sfx_61.wav",
+   "rate": 48000,
+   "samples": 24852,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.51775,
+   "peak": 5436.0,
+   "rms": 2746.002606639105,
+   "sha256": "cee4a0734388c208d71842c65450910ac2b4586ab81778cf2cc83843531b897d",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_61.wav",
+    "sha256": "3c6c8bbe92d6eeb568e2e3104f8d089a365601bcc243d2b34a09d2f289ad2bdb",
+    "start_sample": 366365,
+    "samples": 24852,
+    "catalog_peak": 5436.0
+   }
+  },
+  "0x62": {
+   "file": "rtype_sfx_62.wav",
+   "rate": 48000,
+   "samples": 20022,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.417125,
+   "peak": 2343.0,
+   "rms": 984.4242142811049,
+   "sha256": "9d1a17eacd436336ba37e878c075ace0580563a26cbb99c9660cae4c8246c2e3",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_62.wav",
+    "sha256": "8cf9031e91cbf6e39a82c96f9c78008f0f6bac5338d167ba7df1c1d2a6c33e33",
+    "start_sample": 366690,
+    "samples": 20022,
+    "catalog_peak": 2343.0
+   }
+  },
+  "0x63": {
+   "file": "rtype_sfx_63.wav",
+   "rate": 48000,
+   "samples": 54981,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.1454375,
+   "peak": 5904.0,
+   "rms": 2305.7113627483536,
+   "sha256": "eaa9fd7055b0af12bf1a02f01d1b47cf3e9d4670886ed8cdfc35de48369df102",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_63.wav",
+    "sha256": "83763732bf5677b89531ae19fc6ba8d480831cc44200deb3e628fff62283c62f",
+    "start_sample": 367137,
+    "samples": 54981,
+    "catalog_peak": 5904.0
+   }
+  },
+  "0x64": {
+   "file": "rtype_sfx_64.wav",
+   "rate": 48000,
+   "samples": 30086,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.6267916666666666,
+   "peak": 6230.0,
+   "rms": 1514.8424246748443,
+   "sha256": "90ddf07c821510ff8d5831c599446e369d184d5c3783ed6b5e8e47f270292268",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_64.wav",
+    "sha256": "d1c6337aee11d780321a7df9565966df78890d264b530b22cc2abef44493f3b1",
+    "start_sample": 366573,
+    "samples": 30086,
+    "catalog_peak": 6230.0
+   }
+  },
+  "0x65": {
+   "file": "rtype_sfx_65.wav",
+   "rate": 48000,
+   "samples": 21906,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.456375,
+   "peak": 2927.0,
+   "rms": 1893.7159021870011,
+   "sha256": "a66d461418ded9e05ab81cafed31480ced8399ccbdaa283776e9cc2b8586f3d3",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_65.wav",
+    "sha256": "91dce90f7b5bb93bb50e8098138c77cd0f4c33b248a256f257e45767e27455fd",
+    "start_sample": 366368,
+    "samples": 21906,
+    "catalog_peak": 2927.0
+   }
+  },
+  "0x66": {
+   "file": "rtype_sfx_66.wav",
+   "rate": 48000,
+   "samples": 33402,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.695875,
+   "peak": 2940.0,
+   "rms": 1409.126816467252,
+   "sha256": "effa68bdfbee6cc4b1d6f04ef6c65b106a819345ea4931ac2862cc50211382b0",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_66.wav",
+    "sha256": "22696a2c77dd0f895130706edafc8d3c17194221d5085f6adc34c11dcf29ecf4",
+    "start_sample": 366398,
+    "samples": 33402,
+    "catalog_peak": 2940.0
+   }
+  },
+  "0x67": {
+   "file": "rtype_sfx_67.wav",
+   "rate": 48000,
+   "samples": 24972,
+   "start_seconds": 0.0,
+   "duration_seconds": 0.52025,
+   "peak": 2746.0,
+   "rms": 1481.2511683663379,
+   "sha256": "b0b786e4e9929c9a2c8db84c729503959bfcda7a4283c57b73f5056916320703",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_67.wav",
+    "sha256": "3bfb69033074ae1bd13ca32bea1ec1601e16e8fbe779bbc6cb5870f509379413",
+    "start_sample": 366389,
+    "samples": 24972,
+    "catalog_peak": 2746.0
+   }
+  },
+  "0x68": {
+   "file": "rtype_sfx_68.wav",
+   "rate": 48000,
+   "samples": 98700,
+   "start_seconds": 0.0,
+   "duration_seconds": 2.05625,
+   "peak": 5578.0,
+   "rms": 1257.3525447717404,
+   "sha256": "11f50fa928dc84e24cc170e4bfdd5003cc4a5e06dc5edc68c7d4d8068d465e59",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_68.wav",
+    "sha256": "8eb2708419df7860410e31ffd25a263e013fe617bbae503234a7dc224b385d5b",
+    "start_sample": 366373,
+    "samples": 98700,
+    "catalog_peak": 5578.0
+   }
+  },
+  "0x70": {
+   "file": "rtype_sfx_70.wav",
+   "rate": 48000,
+   "samples": 55628,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.1589166666666666,
+   "peak": 6970.0,
+   "rms": 2650.6764771217513,
+   "sha256": "a1be4150c7d941bb1ea13476e3e24f22b59887af9f7f11876f8508ce9c892353",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_70.wav",
+    "sha256": "f7a9c0195daf4f4ebdb4af4bda33249143e20c01e69b86242e0605652c50087e",
+    "start_sample": 366443,
+    "samples": 55628,
+    "catalog_peak": 6970.0
+   }
+  },
+  "0x71": {
+   "file": "rtype_sfx_71.wav",
+   "rate": 48000,
+   "samples": 55635,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.1590625,
+   "peak": 7027.0,
+   "rms": 2658.9831201045276,
+   "sha256": "7a562a7490f7cb7aeac011cade346ca6fecec5856805a6acbf7e6bdb5e87a714",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_71.wav",
+    "sha256": "bb118dc2775dd26c646f048da195baf6e9cfaa87a3290801653d4dea8e70757d",
+    "start_sample": 366442,
+    "samples": 55635,
+    "catalog_peak": 7027.0
+   }
+  },
+  "0x72": {
+   "file": "rtype_sfx_72.wav",
+   "rate": 48000,
+   "samples": 55635,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.1590625,
+   "peak": 7189.0,
+   "rms": 2609.3808979841956,
+   "sha256": "6a67651421f4dbb4675cff96610f22827b7bcb0f503d23bad212a84dfd6f87b9",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_72.wav",
+    "sha256": "5a2f67860b68243e16a53d185b54eb551315784077c4466c68d199917594b0f6",
+    "start_sample": 366442,
+    "samples": 55635,
+    "catalog_peak": 7189.0
+   }
+  },
+  "0x73": {
+   "file": "rtype_sfx_73.wav",
+   "rate": 48000,
+   "samples": 55624,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.1588333333333334,
+   "peak": 7218.0,
+   "rms": 2591.5191218907794,
+   "sha256": "39688337cff84c77c7e02b05439c553a3b59b551f96a07f8f8ee65621e5c5f54",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_73.wav",
+    "sha256": "04a8e977f8346c8141dcf1bf39322a486352aad3034cf9576c39fbb015e97dcb",
+    "start_sample": 366441,
+    "samples": 55624,
+    "catalog_peak": 7218.0
+   }
+  },
+  "0x74": {
+   "file": "rtype_sfx_74.wav",
+   "rate": 48000,
+   "samples": 55622,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.1587916666666667,
+   "peak": 7069.0,
+   "rms": 2550.45928199555,
+   "sha256": "de1d88c41e8b7d951d2b63ccd34feeee53445721c3b9d87244b407b329a78c00",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_74.wav",
+    "sha256": "b4434b966106a4a043ac1ae2a6edd2e5f669bc9b4989bae10b4446bf62b24e59",
+    "start_sample": 366441,
+    "samples": 55622,
+    "catalog_peak": 7069.0
+   }
+  },
+  "0x75": {
+   "file": "rtype_sfx_75.wav",
+   "rate": 48000,
+   "samples": 55618,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.1587083333333332,
+   "peak": 7252.0,
+   "rms": 2501.8025042034146,
+   "sha256": "f30be1fa6b125ff836c4b86b816c3f780ec0a3391e7ee7169b6d586fd4aea6b5",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_75.wav",
+    "sha256": "019528cfb0de69a10ccbd1e2aeb751ffe812a5a7ccc48b65db3f8bea330a673e",
+    "start_sample": 366441,
+    "samples": 55618,
+    "catalog_peak": 7252.0
+   }
+  },
+  "0x76": {
+   "file": "rtype_sfx_76.wav",
+   "rate": 48000,
+   "samples": 55557,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.1574375,
+   "peak": 6993.0,
+   "rms": 2462.6001545071126,
+   "sha256": "cec40af9ad6440fed5ed679b824f9163409cc7eee34b27b40cd332d38aa7895e",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_76.wav",
+    "sha256": "352a1aca2eae0d4fda7e21240ee15f9a99c05a3b2008cd5cf48eb4c1cd18037a",
+    "start_sample": 366440,
+    "samples": 55557,
+    "catalog_peak": 6993.0
+   }
+  },
+  "0x77": {
+   "file": "rtype_sfx_77.wav",
+   "rate": 48000,
+   "samples": 55607,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.1584791666666667,
+   "peak": 7092.0,
+   "rms": 2429.4844323234524,
+   "sha256": "8710350866a77f51488fa9deff60344fc82d2235fe335b19a566358c2fffdca7",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_77.wav",
+    "sha256": "5b08d75b38fa21a1b3e3ebf5b6963f87828be1407781a650fda0c1fe143ffb6b",
+    "start_sample": 366440,
+    "samples": 55607,
+    "catalog_peak": 7092.0
+   }
+  },
+  "0x78": {
+   "file": "rtype_sfx_78.wav",
+   "rate": 48000,
+   "samples": 55651,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.1593958333333334,
+   "peak": 7087.0,
+   "rms": 2479.533117449825,
+   "sha256": "acd166dacf54a5ff35b7b6ca9c04b3f46755950eded65fa9189e770262298f2c",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_78.wav",
+    "sha256": "74387c9192eb95cf5e1dd43960a194093fac84b77ec5779ea4704c67daed925d",
+    "start_sample": 366440,
+    "samples": 55651,
+    "catalog_peak": 7087.0
+   }
+  },
+  "0x79": {
+   "file": "rtype_sfx_79.wav",
+   "rate": 48000,
+   "samples": 55620,
+   "start_seconds": 0.0,
+   "duration_seconds": 1.15875,
+   "peak": 6807.0,
+   "rms": 2340.2319373062896,
+   "sha256": "10746673b68aa5559e891666867e660f117141e16cc7f8f5840762ffce78be03",
+   "source": {
+    "file": "Build/Arcade/Audio/scan/cmd_79.wav",
+    "sha256": "6a80d86fd18eb4eef2f327b30cdcf7c7e1316fbb5e5e44ad6595f50df664e28b",
+    "start_sample": 366441,
+    "samples": 55620,
+    "catalog_peak": 6807.0
+   }
+  }
+ }
+}
