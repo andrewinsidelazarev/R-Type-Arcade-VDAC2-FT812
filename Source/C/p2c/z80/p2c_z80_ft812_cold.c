@@ -2,10 +2,10 @@
  * (CMD_INFLATE), вытеснение слотов, начало и конец кадра, ввод, отладочный текст.
  *
  * Отступление на аппаратном пределе: отладочная строка рисуется глифами шрифта
- * pygame с шагом символов из метрик шрифта, без кернинга. Ввод отдельной сборки p2c_z80.py
- * (p2c_ft_input) — клавиатура ZX (стрелки как Caps Shift+5..8, QAOP; огонь — Space, Enter),
- * Kempston-джойстик (бит 4 — огонь, бит 5 — Force), кнопки Kempston-мыши (левая — огонь, правая —
- * Force) и правый Alt (Force).
+ * pygame с шагом символов из метрик шрифта, без кернинга. Клавиатура — только очередь скан-кодов PS/2 контроллера
+ * AVR (p2c_ft_keyboard; матрица клавиш ZX не читается). Ввод отдельной сборки p2c_z80.py (p2c_ft_input) — стрелки
+ * и QAOP, огонь — Space, Enter, Kempston-джойстик (бит 4 — огонь, бит 5 — Force), кнопки Kempston-мыши (левая —
+ * огонь, правая — Force) и правый Alt (Force).
  * Код банка исполняется в окне #C000, поэтому страницы каталога читаются и пишутся
  * только резидентными функциями p2c_z80_physical_read/write. */
 #include <string.h>
@@ -15,14 +15,6 @@
 __sfr __at(0x57) p2c_cold_spi_data;
 __sfr __at(0x77) p2c_cold_spi_ctrl;
 __sfr __at(0x1F) p2c_port_kempston;
-__sfr __banked __at(0x7FFE) p2c_port_keys_7ffe;
-__sfr __banked __at(0xBFFE) p2c_port_keys_bffe;
-__sfr __banked __at(0xDFFE) p2c_port_keys_dffe;
-__sfr __banked __at(0xFBFE) p2c_port_keys_fbfe;
-__sfr __banked __at(0xFDFE) p2c_port_keys_fdfe;
-__sfr __banked __at(0xEFFE) p2c_port_keys_effe;
-__sfr __banked __at(0xF7FE) p2c_port_keys_f7fe;
-__sfr __banked __at(0xFEFE) p2c_port_keys_fefe;
 __sfr __banked __at(0xEFF7) p2c_port_gluk_enable;    /* Mr.Gluk ZX Evolution: #80 — регистры открыты */
 __sfr __banked __at(0xDFF7) p2c_port_gluk_register;  /* номер регистра */
 __sfr __banked __at(0xBFF7) p2c_port_gluk_data;      /* данные регистра */
@@ -31,10 +23,19 @@ __sfr __banked __at(0xFADF) p2c_port_mouse_buttons;  /* Kempston-мышь: би�
 /* Скан-кодов PS/2 за кадр не больше (очередь с мусором не должна подвешивать кадр). */
 #define P2C_PS2_DRAIN 24
 
+/* Клавиши PS/2 кадра (p2c_ft_keyboard): p2c_kb_moves — биты P2C_KB_RIGHT…P2C_KB_Q, p2c_kb_buttons — P2C_KB_SPACE,
+ * P2C_KB_ENTER, P2C_KB_ALTGR, P2C_KB_ESC (p2c_z80_ft812.h); p2c_kb_wake — в этом кадре нажата любая клавиша;
+ * p2c_kb_esc — в этом кадре нажат Esc. */
+uint8_t p2c_kb_moves;
+uint8_t p2c_kb_buttons;
+uint8_t p2c_kb_wake;
+uint8_t p2c_kb_esc;
+
 static uint8_t p2c_ps2_ready;        /* очередь скан-кодов включена */
 static uint8_t p2c_ps2_break;        /* был префикс отпускания F0 */
 static uint8_t p2c_ps2_extended;     /* был префикс E0 */
-static uint8_t p2c_ps2_altgr;        /* правый Alt нажат */
+static uint8_t p2c_ps2_last;         /* код последнего нажатия (0 — нет): его повтор — автоповтор, не нажатие */
+static uint8_t p2c_ps2_last_extended; /* у последнего нажатия был префикс E0 */
 
 /* Ждать, пока сопроцессор FT812 исполнит всю очередь (свободно 4092 байта), и снять признак загрузки. */
 void p2c_ft_wait_idle(void) __banked {
@@ -248,9 +249,106 @@ void p2c_ft_open_list(void) __banked {
     p2c_ft_c_h = 0;
 }
 
-/* Конец кадра: END, DISPLAY, отправка буфера; загрузки сопроцессора должны закончиться до показа; DLSWAP_FRAME. */
+/* --- развёртка 59 / 55 Гц и её надпись на титуле ---------------------------------------------------------------------
+ * Отступление от оригинала по просьбе пользователя 2026-09-29: «в главном меню нажатие кнопки ESC приводило к смене
+ * кадровой частоты FT812 59 (по умолчанию) / 50 Гц … С кратковременным (как и в игре с мышью и клавиатурой) появлением
+ * надписи … системным шрифтом: VSync 59 Hz / 50 Hz. Надпись не должна существовать на экране дольше перехода с главного
+ * экрана на любой другой», затем «50 Гц мало. Давай сделаем 59 / 55 (родные)» и «По умолчанию должно быть 59 Гц»;
+ * «можешь слева вывести надпись, если нет места справа» — справа внизу у титула строки «1987 BY IREM CORP.» и «… BY
+ * ANDREW LAZAREV» (до строки 724), поэтому надпись — в левом нижнем углу, как «GS / TSFM» на экране загрузки. 59 Гц —
+ * режим загрузчика (TSLib VM_1024_768_59Hz: ядро 64 МГц, строка 1344 такта, кадр 806 строк), 55 Гц — тот же режим с
+ * кадром 866 строк: 64 000 000 / (1344 · 866) = 54,99 Гц при 55,02 Гц у M72 (865 строк — 55,05 Гц, дальше). Строка, её
+ * цена в тактах FT812 и горизонталь не меняются, 60 лишних строк — пустые после видимых. Игра и мелодии шагают по кадрам
+ * развёртки: при 55 Гц — в темпе аркады, при 59 Гц — быстрее на 7,4 %. Часть мониторов 1024×768 с 55 Гц не показывает
+ * (так было 16.09, отсюда 59 Гц по умолчанию) — повторный Esc на титуле возвращает 59 Гц; после загрузки — всегда 59 Гц.
+ * REG_VCYCLE пишется сразу (TSLib и сам пишет развёртку при включённом REG_PCLK): кадр длиннее — в любой момент без
+ * последствий, короче — в худшем случае один кадр длиннее, пока монитор и так перестраивается на новую частоту.
+ * Надпись — ПЗУ-шрифт 28 FT812, как у надписей машины (vdac2p_label.asm): 12 слов состояния (сдвиг, ножницы, единичная
+ * матрица, BEGIN, белый) и VERTEX2II на знак, пробел — только сдвиг; ширина знака — из таблицы метрик ПЗУ (указатель в
+ * #2FFFFC, блок шрифта — 148 байт с номера 16, байт на код) по ходу вывода: в резиденте оболочки места под таблицы
+ * нет, а чтений — 11 за кадр и только в ≈3 с показа. Показ — P2C_LABEL_FRAMES кадров развёртки по REG_FRAMES, только в
+ * кадрах титула; первый кадр не титула надпись снимает (p2c_rt_frame_end). */
+#define P2C_VCYCLE_59 806u
+#define P2C_VCYCLE_55 866u
+#define P2C_LABEL_FONT 28u
+#define P2C_LABEL_LEFT 16u                    /* левый край, физические пиксели 1024×768 */
+#define P2C_LABEL_TOP 730u                    /* верх строки шрифта — как у надписей машины */
+#define P2C_LABEL_DY 256u                     /* VERTEX_TRANSLATE_Y: у VERTEX2II координаты до 511 */
+#define P2C_LABEL_FRAMES 177u                 /* ≈3 с кадров развёртки 59 Гц (при 55 Гц — 3,2 с), как у надписей машины */
+#define P2C_LABEL_WORDS (12u + 9u)            /* слов надписи: состояние и 9 знаков «VSync 59 Hz» без пробелов */
+
+uint8_t p2c_ft_vsync55;
+uint8_t p2c_ft_label_on;
+static uint16_t p2c_ft_label_until;           /* кадр развёртки конца показа (младшие 16 бит REG_FRAMES) */
+static uint32_t p2c_ft_label_block;           /* адрес блока метрик шрифта P2C_LABEL_FONT в ПЗУ FT812 */
+
+/* Знак надписи с x: VERTEX2II(x, TOP − DY, шрифт, код) = 2 << 30 | x << 21 | y << 12 | handle << 7 | код (пробел —
+ * без слова); возврат — x следующего знака (ширина — байт кода в блоке метрик). */
+static uint16_t p2c_ft_label_glyph(uint16_t x, uint8_t code) {
+    if (code != ' ') {
+        p2c_dl(0x80000000UL | ((uint32_t)(x & 511u) << 21) | ((uint32_t)(P2C_LABEL_TOP - P2C_LABEL_DY) << 12) |
+               ((uint32_t)P2C_LABEL_FONT << 7) | code);
+    }
+    return (uint16_t)(x + p2c_ft_read8(p2c_ft_label_block + code));
+}
+
+/* Esc на титуле: развёртка 59 ↔ 55 Гц — сразу в REG_VCYCLE — и надпись «VSync 59 Hz» или «VSync 55 Hz» на
+ * P2C_LABEL_FRAMES кадров развёртки. */
+void p2c_ft_vsync_toggle(void) __banked {
+    uint16_t vcycle;
+    uint32_t fonts;
+    p2c_ft_vsync55 ^= 1u;
+    vcycle = p2c_ft_vsync55 ? P2C_VCYCLE_55 : P2C_VCYCLE_59;
+    p2c_ft_address(FT_REG_VCYCLE, 1);
+    p2c_cold_spi_data = (uint8_t)vcycle;
+    p2c_cold_spi_data = (uint8_t)(vcycle >> 8);
+    p2c_cold_spi_ctrl = FT_CS_OFF;
+    fonts = (uint32_t)p2c_ft_read16(0x2FFFFCUL) | ((uint32_t)p2c_ft_read8(0x2FFFFEUL) << 16);
+    p2c_ft_label_block = fonts + 148UL * (P2C_LABEL_FONT - 16u);
+    p2c_ft_label_until = (uint16_t)(p2c_ft_read16(FT_REG_FRAMES) + P2C_LABEL_FRAMES);
+    p2c_ft_label_on = 1;
+}
+
+/* Надпись развёртки в конце списка кадра титула (перед END): срок вышел — снять; нет места до FT_DL_LIMIT — кадр без
+ * надписи. Сдвиг X 0 (знаки у левого края), Y 256; ножницы — весь экран; матрица — единичная целиком (под матрицей 8/5
+ * титула глифы ПЗУ-шрифта рвутся); BEGIN BITMAPS и белый; затем знаки. */
+static void p2c_ft_label_emit(void) {
+    uint16_t x;
+    if ((int16_t)(p2c_ft_read16(FT_REG_FRAMES) - p2c_ft_label_until) >= 0) {
+        p2c_ft_label_on = 0;
+        return;
+    }
+    if (p2c_dl_sent + p2c_dl_fill + P2C_LABEL_WORDS * 4u > FT_DL_LIMIT) return;
+    p2c_dl(0x2B000000UL);                             /* VERTEX_TRANSLATE_X 0 */
+    p2c_dl(0x2C000000UL | (P2C_LABEL_DY * 16u));      /* VERTEX_TRANSLATE_Y 256 (1/16 пикселя) */
+    p2c_dl(0x1B000000UL);                             /* SCISSOR_XY 0,0 */
+    p2c_dl(0x1C400300UL);                             /* SCISSOR_SIZE 1024,768 */
+    p2c_dl(0x15000100UL);                             /* BITMAP_TRANSFORM_A 256 — единичная матрица, целиком */
+    p2c_dl(0x16000000UL);
+    p2c_dl(0x17000000UL);
+    p2c_dl(0x18000000UL);
+    p2c_dl(0x19000100UL);                             /* BITMAP_TRANSFORM_E 256 */
+    p2c_dl(0x1A000000UL);
+    p2c_dl(0x1F000001UL);                             /* BEGIN BITMAPS */
+    p2c_dl(0x04FFFFFFUL);                             /* COLOR_RGB 255,255,255 */
+    x = p2c_ft_label_glyph(P2C_LABEL_LEFT, 'V');
+    x = p2c_ft_label_glyph(x, 'S');
+    x = p2c_ft_label_glyph(x, 'y');
+    x = p2c_ft_label_glyph(x, 'n');
+    x = p2c_ft_label_glyph(x, 'c');
+    x = p2c_ft_label_glyph(x, ' ');
+    x = p2c_ft_label_glyph(x, '5');
+    x = p2c_ft_label_glyph(x, p2c_ft_vsync55 ? '5' : '9');
+    x = p2c_ft_label_glyph(x, ' ');
+    x = p2c_ft_label_glyph(x, 'H');
+    p2c_ft_label_glyph(x, 'z');
+}
+
+/* Конец кадра: надпись развёртки (кадры титула), END, DISPLAY, отправка буфера; загрузки сопроцессора должны
+ * закончиться до показа; DLSWAP_FRAME. */
 void p2c_ft_frame_end(void) __banked {
     if (!p2c_ft_list_open) p2c_ft_open_list();
+    if (p2c_ft_label_on) p2c_ft_label_emit();
     p2c_dl(0x21000000UL);          /* END */
     p2c_dl(0x00000000UL);          /* DISPLAY */
     p2c_dl_flush();
@@ -258,14 +356,63 @@ void p2c_ft_frame_end(void) __banked {
     p2c_ft_write8(FT_REG_DLSWAP, 2);
 }
 
-/* Правый Alt (AltGr) из очереди скан-кодов PS/2 (набор 2) контроллера Mr.Gluk ZX Evolution: #EFF7 = #80 открывает
- * регистры (чип общий с часами, которые их закрывают, — поэтому каждый кадр), регистр #F0 — очередь (0 — пуста).
- * Нажатие — «E0 11», отпускание — «E0 F0 11»; «11» без E0 — левый Alt, он не считается. Первый вызов включает очередь
- * (регистр #0C = 1 — сброс буфера, #F0 = 2 — приём с клавиатуры). #FF — переполнение очереди (или контроллера нет):
- * отпускание могло потеряться, поэтому Alt отпущен и чтение кадра заканчивается. Возврат: 1 — правый Alt нажат. */
-uint8_t p2c_ft_altgr(void) __banked {
+/* Клавиша PS/2 (набор 2) → бит p2c_kb_moves или p2c_kb_buttons: code — код клавиши, extended — был префикс E0,
+ * pressed — 1 нажатие, 0 отпускание. Префикс E0 различает только правый Alt («E0 11») и левый («11», не считается):
+ * у стрелок коды свои (E0 74 → и т. д.), и без E0 они — те же стрелки цифрового блока, Enter цифрового блока
+ * («E0 5A») — тот же Enter; так, как в Zuma (Input.asm), потерянный байт E0 стрелку не ломает. Esc («76») — ещё и
+ * событие p2c_kb_esc, если до этого кода он был отпущен: автоповтор при удержании (и повтор после других клавиш) не
+ * переключает скорость, а нажатие с отпусканием в одном кадре — переключает. Прочие коды — мимо. */
+static void p2c_kb_key(uint8_t code, uint8_t extended, uint8_t pressed) {
+    uint8_t *state = &p2c_kb_moves;
+    uint8_t bit;
+    switch (code) {
+    case 0x74: bit = P2C_KB_RIGHT; break;           /* → */
+    case 0x6B: bit = P2C_KB_LEFT; break;            /* ← */
+    case 0x72: bit = P2C_KB_DOWN; break;            /* ↓ */
+    case 0x75: bit = P2C_KB_UP; break;              /* ↑ */
+    case 0x4D: bit = P2C_KB_P; break;               /* P — вправо */
+    case 0x44: bit = P2C_KB_O; break;               /* O — влево */
+    case 0x1C: bit = P2C_KB_A; break;               /* A — вниз */
+    case 0x15: bit = P2C_KB_Q; break;               /* Q — вверх */
+    case 0x29: state = &p2c_kb_buttons; bit = P2C_KB_SPACE; break;
+    case 0x5A: state = &p2c_kb_buttons; bit = P2C_KB_ENTER; break;
+    case 0x11:
+        if (!extended) return;                      /* левый Alt */
+        state = &p2c_kb_buttons;
+        bit = P2C_KB_ALTGR;
+        break;
+    case 0x76:                                      /* Esc — шаг R-9 от клавиш и джойстика ×1 ↔ ×2 */
+        if (pressed && !(p2c_kb_buttons & P2C_KB_ESC)) p2c_kb_esc = 1;   /* был отпущен — нажатие */
+        state = &p2c_kb_buttons;
+        bit = P2C_KB_ESC;
+        break;
+    default:
+        return;
+    }
+    if (pressed) *state |= bit;                     /* нажатие — бит в 1 (повтор нажатия его не меняет) */
+    else *state &= (uint8_t)~bit;                   /* отпускание — в 0 */
+}
+
+/* Клавиатура — только очередь скан-кодов PS/2 (набор 2) контроллера Mr.Gluk ZX Evolution (AVR), как в Wild
+ * Commander (PS2P.ASM) и Zuma (Input.asm); матрица клавиш ZX не читается. Просьба пользователя 28.09.2026: у HIDman
+ * mini (USB → PS/2) клавиши залипали в матрице AVR — прошивка считает нажатия каждой клавиши ZX счётчиком (стрелка —
+ * Caps Shift + цифра), и нажатие без парного отпускания держит клавишу до Esc или выключения питания («клавиатуру
+ * 40-pin вообще не нужно опрашивать», «вот пример игры, где только AVR» — Zuma). Здесь у клавиши одно состояние
+ * «нажата»: повтор нажатия его не меняет, отпускание снимает (p2c_kb_key).
+ * #EFF7 = #80 открывает регистры (чип общий с часами, которые их закрывают, — поэтому каждый кадр), регистр #F0 —
+ * очередь (0 — пуста). Нажатие — код клавиши (у расширенных — с префиксом E0), отпускание — F0 перед кодом. Первый
+ * вызов включает очередь (регистр #0C = 1 — сброс буфера, #F0 = 2 — приём с клавиатуры; так же делают WC и Zuma).
+ * #FF — переполнение очереди (16 байт, AVR сбрасывает её сам): как в Zuma, пропускается — состояния клавиш остаются,
+ * префиксы и последнее нажатие забываются (очередь после сброса начинается с целой клавиши). «E0 12», «E0 59» —
+ * ложные Shift клавиатуры при NumLock — мимо.
+ * Итог кадра: p2c_kb_moves, p2c_kb_buttons и p2c_kb_wake = 1, если нажата любая клавиша. Нажатие того же кода, что
+ * последнее, без отпускания между ними — автоповтор PS/2 (повторяется только последняя нажатая клавиша), не нажатие.
+ * p2c_kb_esc = 1 — в кадре нажат Esc (p2c_kb_key). */
+void p2c_ft_keyboard(void) __banked {
     uint8_t left = P2C_PS2_DRAIN;
     uint8_t code;
+    p2c_kb_wake = 0;
+    p2c_kb_esc = 0;
     p2c_port_gluk_enable = 0x80;
     if (!p2c_ps2_ready) {
         p2c_port_gluk_register = 0x0C;
@@ -278,11 +425,11 @@ uint8_t p2c_ft_altgr(void) __banked {
     while (left--) {
         code = p2c_port_gluk_data;
         if (!code) break;                           /* очередь пуста */
-        if (code == 0xFF) {
-            p2c_ps2_altgr = 0;
+        if (code == 0xFF) {                         /* переполнение: состояния клавиш остаются */
             p2c_ps2_break = 0;
             p2c_ps2_extended = 0;
-            break;
+            p2c_ps2_last = 0;
+            continue;
         }
         if (code == 0xE0) {
             p2c_ps2_extended = 1;                   /* E0 приходит перед F0 */
@@ -292,40 +439,46 @@ uint8_t p2c_ft_altgr(void) __banked {
             p2c_ps2_break = 1;
             continue;
         }
-        if (code == 0x11 && p2c_ps2_extended) p2c_ps2_altgr = (uint8_t)!p2c_ps2_break;
+        if (!(p2c_ps2_extended && (code == 0x12 || code == 0x59))) {
+            if (p2c_ps2_break) {
+                /* отпускание: у последнего нажатия его повтор снова будет нажатием */
+                if (code == p2c_ps2_last && p2c_ps2_extended == p2c_ps2_last_extended) p2c_ps2_last = 0;
+                p2c_kb_key(code, p2c_ps2_extended, 0);
+            } else {
+                if (code != p2c_ps2_last || p2c_ps2_extended != p2c_ps2_last_extended) {
+                    p2c_kb_wake = 1;                /* нажатие, а не автоповтор */
+                    p2c_ps2_last = code;
+                    p2c_ps2_last_extended = p2c_ps2_extended;
+                }
+                p2c_kb_key(code, p2c_ps2_extended, 1);
+            }
+        }
         p2c_ps2_break = 0;                          /* код клавиши съедает префиксы */
         p2c_ps2_extended = 0;
     }
-    return p2c_ps2_altgr;
 }
 
 /* Ввод отдельной сборки p2c_z80.py: биты направлений (1 — влево, 2 — вправо, 4 — вверх, 8 — вниз), огонь 16, Force
  * 32; start_pressed — нажатие огня в этом кадре. Кнопки мыши активным нулём; без мыши порт читается как #FF. */
 void p2c_ft_input(uint8_t *start_pressed, uint8_t *input_bits) __banked {
     uint8_t bits = 0;
-    uint8_t row_7ffe = p2c_port_keys_7ffe;   /* Space Sym M N B */
-    uint8_t row_bffe = p2c_port_keys_bffe;   /* Enter L K J H */
-    uint8_t row_dffe = p2c_port_keys_dffe;   /* P O I U Y */
-    uint8_t row_fbfe = p2c_port_keys_fbfe;   /* Q W E R T */
-    uint8_t row_fdfe = p2c_port_keys_fdfe;   /* A S D F G */
-    uint8_t row_effe = p2c_port_keys_effe;   /* 0 9 8 7 6 */
-    uint8_t row_f7fe = p2c_port_keys_f7fe;   /* 1 2 3 4 5 */
-    uint8_t row_fefe = p2c_port_keys_fefe;   /* Caps Z X C V */
     uint8_t kempston = p2c_port_kempston;
     uint8_t mouse = p2c_port_mouse_buttons;
-    uint8_t caps = !(row_fefe & 1u);
+    uint8_t moves;
     uint8_t fire;
     uint8_t start;
     if (kempston == 0xFF) kempston = 0;       /* порт без джойстика */
-    if (!(row_dffe & 2u) || (caps && !(row_f7fe & 16u)) || (kempston & 2u)) bits |= 1u;   /* влево */
-    if (!(row_dffe & 1u) || (caps && !(row_effe & 4u)) || (kempston & 1u)) bits |= 2u;   /* вправо */
-    if (!(row_fbfe & 1u) || (caps && !(row_effe & 8u)) || (kempston & 8u)) bits |= 4u;   /* вверх */
-    if (!(row_fdfe & 1u) || (caps && !(row_effe & 16u)) || (kempston & 4u)) bits |= 8u;  /* вниз */
-    fire = (uint8_t)(!(row_7ffe & 1u) || !(row_bffe & 1u) || (kempston & 16u) || !(mouse & 1u));  /* Space, Enter */
+    p2c_ft_keyboard();
+    moves = (uint8_t)((p2c_kb_moves | (p2c_kb_moves >> 4)) & 15u);   /* стрелки | P O A Q: вправо 1, влево 2, вниз 4, вверх 8 */
+    if ((moves & 2u) || (kempston & 2u)) bits |= 1u;    /* влево */
+    if ((moves & 1u) || (kempston & 1u)) bits |= 2u;    /* вправо */
+    if ((moves & 8u) || (kempston & 8u)) bits |= 4u;    /* вверх */
+    if ((moves & 4u) || (kempston & 4u)) bits |= 8u;    /* вниз */
+    fire = (uint8_t)((p2c_kb_buttons & (P2C_KB_SPACE | P2C_KB_ENTER)) || (kempston & 16u) || !(mouse & 1u));
     if (fire) bits |= 16u;
     /* Отделение и возврат Force: правый Alt, правая кнопка Kempston-мыши и вторая кнопка
      * Kempston-джойстика (бит 5 порта #1F) — просьба пользователя 22.09.2026. */
-    if (p2c_ft_altgr() || !(mouse & 2u) || (kempston & 32u)) bits |= 32u;
+    if ((p2c_kb_buttons & P2C_KB_ALTGR) || !(mouse & 2u) || (kempston & 32u)) bits |= 32u;
     *input_bits = bits;
     /* Старт игры дублирует восьмая кнопка Kempston (бит 7 порта #1F) — просьба пользователя 22.09.2026.
      * Только старт: в input_bits она не идёт, огнём и Force не работает. */

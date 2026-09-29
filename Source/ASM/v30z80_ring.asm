@@ -93,13 +93,24 @@ RING_MOVED      DB 0                    ; ≠ 0 — зона сдвигалас�
 RING_SCAN       DB 0                    ; RingCatchUp: ≠ 0 — полный проход (обязательная запись возможна)
 RING_BAND       DW 0                    ; VIS_ROW2, VIS_ROWS2 полного прохода
 
-; Родные тайлы из хвоста пака (RING_TILES_SECTOR) → страницы RING_TILE_PAGE0…: VDAC2+ — одним чтением загрузчика через
-; DMA SPI→RAM прямо в страницы (32 сектора на страницу; прежде — куски по 32 сектора через буфер загрузчика и DmaCopy).
-; Вызов из хоста сразу после открытия пака. Z — прочитано. Портит всё, окно W2.
+; Родные тайлы из хвоста пака (RING_TILES_SECTOR) → страницы RING_TILE_PAGE0… (32 сектора на страницу), последний сектор
+; хвоста — карта одноцветных тайлов — в начало рабочей страницы RING_WORK_PAGE: VDAC2+ — чтениями загрузчика через DMA
+; SPI→RAM прямо в страницы (прежде — куски по 32 сектора через буфер загрузчика и DmaCopy). Два чтения, а не одно:
+; рабочая страница не следует за тайлами — между ними страница #F7, где Wild Commander хранит пути панелей между
+; сбросами (rtype_ring.py WC_PATHS_PAGE; просьба пользователя 28.09.2026), кольцо её не трогает. Загрузчик после
+; чтения остаётся в окне W2 и сохраняет флаги результата — второе чтение сразу. Вызов из хоста сразу после открытия
+; пака. Z — прочитано. Портит всё, окно W2.
+                ASSERT RING_TILES_SECTORS == RING_TILE_PAGES*32+1
+                ASSERT RING_TILES_SECTOR+RING_TILE_PAGES*32 < #10000
 RingTilesLoad:  call LoaderMap
                 ld hl,RING_TILES_SECTOR
-                ld bc,RING_TILES_SECTORS
+                ld bc,RING_TILE_PAGES*32
                 ld a,RING_TILE_PAGE0
+                call LOADER_READ_DMA
+                ret nz                          ; ошибка чтения
+                ld hl,RING_TILES_SECTOR+RING_TILE_PAGES*32
+                ld bc,1
+                ld a,RING_WORK_PAGE
                 jp LOADER_READ_DMA
 
 ; Таблицы рабочей страницы (окно W2): палитра p, байт b родного тайла → с p·512 + b старший тексел (b >> 4) + p·16,

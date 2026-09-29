@@ -1,18 +1,18 @@
 /* Ввод цикла app.main полного runtime на TS-Config (адаптер событий pygame и RuntimeInput),
- * банковая часть. Клавиатура ZX, PS/2-клавиатура ZX Evolution (правый Alt), Kempston-джойстик,
- * Kempston-мышь. Управление — как в CLAUDE.md (как в HMM2); клавиш монеты и старта системы нет.
+ * банковая часть. Клавиатура PS/2 ZX Evolution, Kempston-джойстик, Kempston-мышь. Управление — как в CLAUDE.md
+ * (как в HMM2); клавиш монеты и старта системы нет.
  *
  * События кадра (FrameEvents, биты 0–3): title_start — нажатие огня (Space, Enter, огонь Kempston, ЛКМ),
  * system_start и coin — всегда 0, demo_wake — нажатие любой клавиши (и правого Alt), огня Kempston или ЛКМ
  * (любой KEYDOWN, JOYBUTTONDOWN, MOUSEBUTTONDOWN кнопки 1; ПКМ не будит — как в Python).
- * Кнопки игры (GameButtons, биты 0–5, как _input_mask): вправо, влево, вниз, вверх — стрелки
- * (Caps+8, Caps+5, Caps+6, Caps+7), QAOP, Kempston-джойстик; огонь — Space, Enter, огонь Kempston
- * или ЛКМ; Force — правый Alt (AltGr) или ПКМ (FORCE_KEYS K_RALT и кнопка 3 мыши Python-версии):
- * удерживаемые или нажатые в этом кадре. После p2c_z80_input_clear (сброс сессии,
- * held_input.clear_actions) удерживаемые огонь и Force не действуют до отпускания.
+ * Кнопки игры (GameButtons, биты 0–5, как _input_mask): вправо, влево, вниз, вверх — стрелки, QAOP,
+ * Kempston-джойстик; огонь — Space, Enter, огонь Kempston или ЛКМ; Force — правый Alt (AltGr) или ПКМ (FORCE_KEYS
+ * K_RALT и кнопка 3 мыши Python-версии): удерживаемые или нажатые в этом кадре. После p2c_z80_input_clear (сброс
+ * сессии, held_input.clear_actions) удерживаемые огонь и Force не действуют до отпускания.
  *
- * Правый Alt в матрице ZX не виден: он читается из очереди скан-кодов PS/2 контроллера Mr.Gluk ZX Evolution
- * (p2c_ft_altgr, p2c_z80_ft812_cold.c — как во вводе Zuma и HMM2 на VDAC2).
+ * Клавиатура — только очередь скан-кодов PS/2 контроллера AVR ZX Evolution (p2c_ft_keyboard, p2c_z80_ft812_cold.c —
+ * как в Wild Commander и Zuma); матрица клавиш ZX не читается (просьба пользователя 28.09.2026: у HIDman mini клавиши
+ * залипали в матрице AVR, «клавиатуру 40-pin вообще не нужно опрашивать»).
  *
  * Kempston-мышь: #FBDF — счётчик X (растёт вправо), #FFDF — счётчик Y (растёт вверх), #FADF —
  * кнопки (бит 0 — левая, бит 1 — правая, бит 2 — средняя; 0 — нажата). Без мыши порты читаются как #FF: движения и
@@ -21,20 +21,28 @@
  * их переносит в позицию корабля вызов машины 9 (p2c_port_mouse, ApiMouse в v30z80_runtime.asm).
  * Чувствительность мыши (просьба пользователя 2026-09-17: новая PS/2-мышь бегает вдвое быстрее) — 1 или 1/2,
  * переключается средней кнопкой по фронту нажатия, при запуске — 1: при 1/2 смещение кадра делится пополам с
- * переносом остатка оси (p2c_rt_mouse_scale), так что за много кадров путь ровно вдвое короче. */
+ * переносом остатка оси (p2c_rt_mouse_scale), так что за много кадров путь ровно вдвое короче.
+ *
+ * Esc (p2c_kb_esc) действует по экрану прошлого кадра p2c_rt_screen — тому, что игрок видел, нажимая (решения
+ * пользователя 2026-09-29, отступления от оригинала, как скорость мыши):
+ *   титул — развёртка FT812 59 ↔ 55 Гц и надпись «VSync 59 Hz» / «VSync 55 Hz» (p2c_ft_vsync_toggle,
+ *     p2c_z80_ft812_cold.c): «в главном меню нажатие кнопки ESC приводило к смене кадровой частоты FT812 59 (по
+ *     умолчанию) / 50 Гц», затем «Давай сделаем 59 / 55 (родные)»;
+ *   игра — шаг R-9 от клавиш и Kempston-джойстика ×1 ↔ ×2 (p2c_rt_keys_double, при запуске — ×1): «при нажатии ESC
+ *     корабль сдвигается с шагом в 2 больше с клавиатуры или Kempston Joystick. Повторное нажатие клавиши ESC
+ *     возвращает обычное поведение». Машине он приходит битом 3 флагов шага (p2c_port_step): шаг по направлению
+ *     обработчика R-9 $2027 прибавляется дважды (N_2027, vdac2p_native2.asm), и около трёх секунд видна надпись
+ *     «Keys / joystick speed: 2x» или «1x» (vdac2p_label.asm);
+ *   демо — только пробуждение (как любая клавиша): ни развёртка, ни шаг клавиш не меняются. */
 #include "p2c_z80_adapter.h"
 #include "p2c_z80_ft812.h"
 
-/* Состояние ввода (адреса — в ассемблере p2c_z80_runtime_input). */
-uint8_t p2c_rt_rows[8];                  /* нажатые клавиши матрицы этого кадра (1 — нажата): строки #FEFE…#7FFE */
-uint8_t p2c_rt_rows_previous[8];         /* прошлого кадра */
+/* Состояние ввода (адреса — в ассемблере p2c_z80_runtime_input). Клавиши кадра — p2c_kb_moves, p2c_kb_buttons,
+ * p2c_kb_wake (p2c_ft_keyboard). */
 uint8_t p2c_rt_fire_previous;            /* огонь прошлого кадра (0/1) */
 uint8_t p2c_rt_force_previous;           /* Force прошлого кадра (0/1) */
 uint8_t p2c_rt_start_previous;           /* вторая кнопка старта прошлого кадра (бит 7 #1F, #80 — нажата) */
 uint8_t p2c_rt_blocked;                  /* биты 16 и 32: огонь и Force держатся со сброса сессии */
-uint8_t p2c_rt_altgr;                    /* правый Alt этого кадра (0/1) */
-uint8_t p2c_rt_altgr_previous;           /* прошлого кадра */
-uint8_t p2c_rt_wake;                     /* пробуждение кадра от матрицы и правого Alt (0/1) */
 uint8_t p2c_rt_joystick;                 /* Kempston-джойстик кадра (порт без джойстика — 0) */
 uint8_t p2c_rt_mouse_keys;               /* кнопки мыши кадра (#FADF, 0 — нажата) */
 uint8_t p2c_rt_mouse_ready;              /* счётчики мыши прошлого кадра прочитаны */
@@ -44,6 +52,10 @@ uint8_t p2c_rt_mouse_half;               /* чувствительность м�
 uint8_t p2c_rt_mmb_previous;             /* средняя кнопка прошлого кадра (4 — нажата) */
 uint8_t p2c_rt_mouse_rest_x;             /* остатки деления смещения пополам по осям (0/1) */
 uint8_t p2c_rt_mouse_rest_y;
+uint8_t p2c_rt_keys_double;              /* шаг R-9 от клавиш и джойстика: 0 — ×1, 1 — ×2 (Esc; нули загрузчика) */
+uint8_t p2c_rt_screen;                   /* экран прошлого кадра: 0 — титул (и до первого кадра), 1 — машина без игрока
+                                            (демо), 2 — игра (p2c_rt_frame_end) */
+uint8_t p2c_rt_game_frame;               /* в этом кадре был ход игрока (p2c_port_mouse зовётся только вне демо) */
 int8_t p2c_z80_mouse_dx;                 /* смещение мыши кадра в отсчётах: вправо — плюс (p2c_port_mouse) */
 int8_t p2c_z80_mouse_dy;                 /* вверх — плюс */
 uint8_t p2c_z80_input_events;            /* FrameEvents кадра: бит 0 title_start, 3 demo_wake (1, 2 — всегда 0) */
@@ -51,59 +63,41 @@ uint8_t p2c_z80_input_buttons;           /* GameButtons кадра: вправо
 
 /* Ввод кадра — на ассемблере (C-версия после SDCC стоила ≈6 тыс. тактов на кадр). Итог — в p2c_z80_input_events и
  * p2c_z80_input_buttons. По шагам (как C-версия до переписывания):
- *   altgr = p2c_ft_altgr(); rows[i] = ~IN(#FEFE, #FDFE, … #7FFE) & 31;
- *   wake = есть бит rows[i] & ~rows_previous[i] или altgr & ~altgr_previous; kempston = IN(#1F), #FF → 0;
+ *   p2c_ft_keyboard(): moves, buttons — нажатые клавиши PS/2, wake — нажата любая, esc — нажат Esc;
+ *     esc: screen 0 (титул) — p2c_ft_vsync_toggle(), 2 (игра) — keys_double ^= 1, 1 (демо) — ничего;
+ *     kempston = IN(#1F), #FF → 0;
  *   мышь: средняя кнопка нажата впервые — half ^= 1, остатки осей 0; dx = X − X_прошл, dy = Y − Y_прошл (по модулю
  *     256 со знаком; |d| > 63 — скачок, 0; первый кадр — 0); при half: s = d + остаток, d = s >> 1, остаток = s & 1;
- *   fire = rows[7] & 1 (Space) | rows[6] & 1 (Enter) | kempston & 16 | ЛКМ — 0/1;
- *   force = altgr | ПКМ | kempston & 32 (вторая кнопка джойстика) — 0/1;
- *   bits = kempston & 15 | rows[5] & 3 (P вправо, O влево) | rows[1] & 1 → 4 (A вниз) | rows[2] & 1 → 8 (Q вверх),
- *     с Caps (rows[0] & 1) ещё «8» (rows[4] & 4) → 1, «5» (rows[3] & 16) → 2, «6» (rows[4] & 16) → 4, «7» (rows[4] & 8) → 8;
+ *   fire = buttons & (Space | Enter) | kempston & 16 | ЛКМ — 0/1;
+ *   force = buttons & правый Alt | ПКМ | kempston & 32 (вторая кнопка джойстика) — 0/1;
+ *   bits = kempston & 15 | (moves | moves >> 4) & 15 (стрелки | P O A Q: вправо 1, влево 2, вниз 4, вверх 8);
  *   held = fire·16 + force·32; blocked &= held; bits |= held & ~blocked; огонь нажат впервые — | 16, Force — | 32;
  *   start = kempston & 128 (восьмая кнопка джойстика); events = (огонь впервые | start впервые) +
  *     (wake | огонь впервые)·8 — start только стартует игру: в bits и в wake он не идёт;
- *   rows_previous = rows, fire/force/altgr/start_previous = fire/force/altgr/start.
+ *   fire/force/start_previous = fire/force/start.
  * Регистры не сохраняются: вызывающий — код C. */
 void p2c_z80_runtime_input(void) __banked __naked {
     __asm
-        call    _p2c_ft_altgr                   ; A — правый Alt (0/1); тот же банк — прямой вызов
-        ld      (_p2c_rt_altgr), a
-        ; --- матрица ZX ---
-        ld      hl, #_p2c_rt_rows
-        ld      bc, #0xFEFE
-        ld      d, #8
-p2c_rt_row:
-        in      a, (c)
-        cpl
-        and     a, #0x1F
+        call    _p2c_ft_keyboard                ; клавиши PS/2 кадра: p2c_kb_moves, p2c_kb_buttons, p2c_kb_wake,
+                                                ; p2c_kb_esc; тот же банк — прямой вызов
+        ; --- Esc по экрану прошлого кадра: титул (0) — развёртка 59 ↔ 55 Гц, игра (2) — шаг клавиш ×1 ↔ ×2,
+        ;     демо (1) — только пробуждение ---
+        ld      a, (_p2c_kb_esc)
+        or      a, a
+        jr      z, p2c_rt_esc_done
+        ld      a, (_p2c_rt_screen)
+        or      a, a
+        jr      nz, p2c_rt_esc_game
+        call    _p2c_ft_vsync_toggle            ; тот же банк — прямой вызов
+        jr      p2c_rt_esc_done
+p2c_rt_esc_game:
+        cp      a, #2
+        jr      nz, p2c_rt_esc_done
+        ld      hl, #_p2c_rt_keys_double
+        ld      a, (hl)
+        xor     a, #1
         ld      (hl), a
-        inc     hl
-        rlc     b                               ; #FE → #FD → … → #7F
-        dec     d
-        jr      nz, p2c_rt_row
-        ; --- пробуждение: клавиша нажата впервые (C = 1) ---
-        ld      hl, #_p2c_rt_rows
-        ld      de, #_p2c_rt_rows_previous
-        ld      bc, #0x0800
-p2c_rt_wake_row:
-        ld      a, (de)
-        cpl
-        and     a, (hl)
-        jr      z, p2c_rt_wake_next
-        ld      c, #1
-p2c_rt_wake_next:
-        inc     hl
-        inc     de
-        djnz    p2c_rt_wake_row
-        ld      a, (_p2c_rt_altgr_previous)
-        cpl
-        ld      hl, #_p2c_rt_altgr
-        and     a, (hl)                         ; правый Alt нажат впервые
-        jr      z, p2c_rt_wake_store
-        ld      c, #1
-p2c_rt_wake_store:
-        ld      a, c
-        ld      (_p2c_rt_wake), a
+p2c_rt_esc_done:
         ; --- Kempston-джойстик ---
         ld      bc, #0x001F
         in      a, (c)
@@ -165,12 +159,8 @@ p2c_rt_mouse_store:
         ld      a, #1
         ld      (_p2c_rt_mouse_ready), a
         ; --- огонь: B = 0/1 ---
-        ld      a, (_p2c_rt_rows+7)             ; Space Sym M N B
-        and     a, #0x01                        ; Space
-        ld      b, a
-        ld      a, (_p2c_rt_rows+6)             ; Enter L K J H
-        and     a, #0x01                        ; Enter
-        or      a, b
+        ld      a, (_p2c_kb_buttons)
+        and     a, #0x03                        ; Space, Enter (P2C_KB_SPACE | P2C_KB_ENTER)
         ld      b, a
         ld      a, (_p2c_rt_joystick)
         and     a, #0x10                        ; огонь Kempston
@@ -193,52 +183,30 @@ p2c_rt_force:
         jr      nz, p2c_rt_force_altgr
         ld      c, #1                           ; ПКМ нажата
 p2c_rt_force_altgr:
-        ld      a, (_p2c_rt_altgr)
-        or      a, c
-        ld      c, a
+        ld      a, (_p2c_kb_buttons)
+        and     a, #0x04                        ; правый Alt (P2C_KB_ALTGR)
+        jr      z, p2c_rt_force_joystick
+        ld      c, #1
+p2c_rt_force_joystick:
         ld      a, (_p2c_rt_joystick)
         and     a, #0x20                        ; вторая кнопка Kempston — тоже сброс модуля защиты
         jr      z, p2c_rt_force_done
         ld      c, #1
 p2c_rt_force_done:
-        ; --- направления: E ---
+        ; --- направления: E = (moves | moves >> 4) & 15 | kempston & 15 ---
+        ld      a, (_p2c_kb_moves)              ; стрелки → ← ↓ ↑ — биты 0…3, P O A Q — биты 4…7
+        ld      e, a
+        rrca
+        rrca
+        rrca
+        rrca                                    ; P O A Q — в биты 0…3
+        or      a, e
+        and     a, #0x0F                        ; вправо 1, влево 2, вниз 4, вверх 8
+        ld      e, a
         ld      a, (_p2c_rt_joystick)
         and     a, #0x0F
-        ld      e, a
-        ld      a, (_p2c_rt_rows+5)             ; P O I U Y
-        and     a, #0x03                        ; P — вправо, O — влево
         or      a, e
         ld      e, a
-        ld      a, (_p2c_rt_rows+1)             ; A S D F G
-        rra
-        jr      nc, p2c_rt_key_q
-        set     2, e                            ; A — вниз
-p2c_rt_key_q:
-        ld      a, (_p2c_rt_rows+2)             ; Q W E R T
-        rra
-        jr      nc, p2c_rt_caps
-        set     3, e                            ; Q — вверх
-p2c_rt_caps:
-        ld      a, (_p2c_rt_rows)               ; Caps Z X C V
-        rra
-        jr      nc, p2c_rt_held                 ; без Caps стрелок нет
-        ld      a, (_p2c_rt_rows+4)             ; 0 9 8 7 6
-        bit     2, a
-        jr      z, p2c_rt_caps_6
-        set     0, e                            ; Caps+8 — вправо
-p2c_rt_caps_6:
-        bit     4, a
-        jr      z, p2c_rt_caps_7
-        set     2, e                            ; Caps+6 — вниз
-p2c_rt_caps_7:
-        bit     3, a
-        jr      z, p2c_rt_caps_5
-        set     3, e                            ; Caps+7 — вверх
-p2c_rt_caps_5:
-        ld      a, (_p2c_rt_rows+3)             ; 1 2 3 4 5
-        bit     4, a
-        jr      z, p2c_rt_held
-        set     1, e                            ; Caps+5 — влево
 p2c_rt_held:
         ; --- удерживаемые: held = огонь·16 + Force·32; blocked &= held; bits |= held & ~blocked ---
         ld      a, c
@@ -287,7 +255,7 @@ p2c_rt_buttons:
         jr      z, p2c_rt_events_wake
         set     0, h                            ; title_start и от неё
 p2c_rt_events_wake:
-        ld      a, (_p2c_rt_wake)
+        ld      a, (_p2c_kb_wake)               ; нажата клавиша PS/2
         or      a, d                            ; огонь нажат впервые — тоже пробуждение
         jr      z, p2c_rt_events
         set     3, h
@@ -299,12 +267,6 @@ p2c_rt_events:
         ld      (_p2c_rt_fire_previous), a
         ld      a, c
         ld      (_p2c_rt_force_previous), a
-        ld      a, (_p2c_rt_altgr)
-        ld      (_p2c_rt_altgr_previous), a
-        ld      hl, #_p2c_rt_rows
-        ld      de, #_p2c_rt_rows_previous
-        ld      bc, #8
-        ldir
         ret
 ; Смещение счётчика мыши: A — разность по модулю 256; со знаком больше 63 или меньше −63 — 0.
 p2c_rt_mouse_delta:
@@ -336,4 +298,19 @@ p2c_rt_mouse_scale:
 /* Сброс сессии (held_input.clear_actions): удерживаемые огонь и Force не действуют до отпускания. */
 void p2c_z80_input_clear(void) __banked {
     p2c_rt_blocked = 48u;
+}
+
+/* Конец кадра цикла app.main (после p2c_z80_frame_end): экран кадра — для Esc следующего. Кадр не показывала машина —
+ * показан список титула: титул; показала — с ходом игрока (p2c_port_mouse) игра, без него демо. Кадр не титула снимает
+ * надпись развёртки: «надпись не должна существовать на экране дольше перехода с главного экрана на любой другой»
+ * (просьба пользователя 2026-09-29) — и при возврате на титул прежняя не показывается. В банке, а не в резиденте: там
+ * места нет. */
+void p2c_rt_frame_end(void) __banked {
+    if (!p2c_ft_skip_swap) {
+        p2c_rt_screen = 0;
+    } else {
+        p2c_rt_screen = p2c_rt_game_frame ? 2u : 1u;
+        p2c_ft_label_on = 0;
+    }
+    p2c_rt_game_frame = 0;
 }

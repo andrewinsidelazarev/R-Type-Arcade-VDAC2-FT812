@@ -10,6 +10,8 @@
 #define FT_CS_ON 0x07              /* порт выбора SPI: FT812 выбран */
 #define FT_CS_OFF 0x03             /* ничего не выбрано */
 #define FT_RAM_DL 0x300000UL
+#define FT_REG_FRAMES 0x302004UL
+#define FT_REG_VCYCLE 0x302040UL
 #define FT_REG_DLSWAP 0x302054UL
 #define FT_REG_CMDB_SPACE 0x302574UL
 #define FT_REG_CMDB_WRITE 0x302578UL
@@ -94,7 +96,35 @@ void p2c_ft_frame_begin(void) __banked;
 void p2c_ft_open_list(void) __banked;
 void p2c_ft_frame_end(void) __banked;
 void p2c_ft_input(uint8_t *start_pressed, uint8_t *input_bits) __banked;
-/* Правый Alt (AltGr) из очереди скан-кодов PS/2 ZX Evolution: 1 — нажат (читает очередь, вызывать раз за кадр). */
-uint8_t p2c_ft_altgr(void) __banked;
+/* Развёртка FT812 59 ↔ 55 Гц (Esc на титуле): REG_VCYCLE — сразу, надпись «VSync 59 Hz» / «VSync 55 Hz» — в кадрах
+ * титула до срока или до первого кадра не титула (p2c_ft_label_on = 0). */
+void p2c_ft_vsync_toggle(void) __banked;
+extern uint8_t p2c_ft_vsync55;         /* 1 — 55 Гц как у M72 (REG_VCYCLE 866), 0 — 59 Гц (806, режим TSLib загрузчика) */
+extern uint8_t p2c_ft_label_on;        /* надпись развёртки показывается в кадрах титула */
+/* Клавиатура PS/2 из очереди скан-кодов AVR ZX Evolution (читает очередь, вызывать раз за кадр): p2c_kb_moves,
+ * p2c_kb_buttons — нажатые клавиши, p2c_kb_wake — в кадре нажата любая клавиша (не автоповтор), p2c_kb_esc — в кадре
+ * нажат Esc (переход из «отпущена» в «нажата»: автоповтор не считается, быстрое нажатие с отпусканием в том же кадре —
+ * считается). */
+void p2c_ft_keyboard(void) __banked;
+
+/* Биты p2c_kb_moves: стрелки — младшая тетрада, P O A Q — старшая, в том же порядке, поэтому направления кадра —
+ * (moves | moves >> 4) & 15 с битами GameButtons: вправо 1, влево 2, вниз 4, вверх 8. */
+#define P2C_KB_RIGHT 0x01u      /* → (E0 74) */
+#define P2C_KB_LEFT 0x02u       /* ← (E0 6B) */
+#define P2C_KB_DOWN 0x04u       /* ↓ (E0 72) */
+#define P2C_KB_UP 0x08u         /* ↑ (E0 75) */
+#define P2C_KB_P 0x10u          /* P (4D) — вправо */
+#define P2C_KB_O 0x20u          /* O (44) — влево */
+#define P2C_KB_A 0x40u          /* A (1C) — вниз */
+#define P2C_KB_Q 0x80u          /* Q (15) — вверх */
+/* Биты p2c_kb_buttons. */
+#define P2C_KB_SPACE 0x01u      /* Space (29) — огонь */
+#define P2C_KB_ENTER 0x02u      /* Enter (5A, у цифрового блока — E0 5A) — огонь */
+#define P2C_KB_ALTGR 0x04u      /* правый Alt (E0 11) — Force */
+#define P2C_KB_ESC 0x08u        /* Esc (76) — шаг R-9 от клавиш и джойстика ×1 ↔ ×2 (по событию p2c_kb_esc) */
+extern uint8_t p2c_kb_moves;
+extern uint8_t p2c_kb_buttons;
+extern uint8_t p2c_kb_wake;
+extern uint8_t p2c_kb_esc;
 
 #endif

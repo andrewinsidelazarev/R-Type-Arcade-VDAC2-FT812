@@ -6,8 +6,10 @@ DMA RAM→SPI (режим #82: данные страниц идут в откр�
 REG_DLSWAP, очередь сопроцессора через REG_CMDB_WRITE с CMD_INFLATE, REG_CMDB_SPACE.
 Клавиатура ZX и Kempston — из заданного набора нажатых клавиш. На той же шине SPI — SD-карта
 (необязательная модель Z-Controller: байты #57, пока FT812 не выбран, и выбор #77 — ей).
-Правый Alt («altgr» в наборе клавиш) — скан-коды PS/2 E0 11 / E0 F0 11 в очереди Mr.Gluk (чтение #BFF7, 0 —
-очередь пуста) при смене нажатия; Kempston-мышь: кнопки «lmb», «rmb», «mmb» (#FADF биты 0…2, активный ноль), движение
+Клавиатура PS/2 — скан-коды набора 2 в очереди Mr.Gluk (чтение #BFF7, 0 — очередь пуста) при смене нажатия
+клавиш набора (PS2_CODES: клавиши ZX по именам, стрелки «right», «left», «down», «up», правый Alt «altgr», Esc
+«esc»); игра с 28.09.2026 берёт клавиши только отсюда, матрица ZX (#xxFE) по именам клавиш осталась для прочих проверок;
+Kempston-мышь: кнопки «lmb», «rmb», «mmb» (#FADF биты 0…2, активный ноль), движение
 «mouse_right», «mouse_left», «mouse_up», «mouse_down» — MOUSE_COUNTS отсчётов на чтение счётчика #FBDF / #FFDF.
 
 render() строит кадр 1024×768 RGB из показанного display list: CLEAR с ножницами, VERTEX2II
@@ -42,6 +44,33 @@ KEY_ROWS = {
     0xF7: ('1', '2', '3', '4', '5'), 0xEF: ('0', '9', '8', '7', '6'), 0xDF: ('p', 'o', 'i', 'u', 'y'),
     0xBF: ('enter', 'l', 'k', 'j', 'h'), 0x7F: ('space', 'sym', 'm', 'n', 'b'),
 }
+# Клавиатура PS/2 (набор 2) — очередь Mr.Gluk (#BFF7), единственный источник клавиш игры с 28.09.2026: имя клавиши
+# набора → код нажатия (у расширенных — с E0; отпускание — F0 перед последним байтом). Клавиши ZX по именам — как
+# их даёт AVR ZX Evolution с клавиатуры PC («caps» — левый Shift, «sym» — правый Shift); стрелки — псевдоклавиши
+# «right», «left», «down», «up»; правый Alt — «altgr»; Esc — «esc» (шаг клавиш и джойстика ×1 ↔ ×2, с 29.09.2026).
+PS2_CODES = {
+    'a': b'\x1C', 'b': b'\x32', 'c': b'\x21', 'd': b'\x23', 'e': b'\x24', 'f': b'\x2B', 'g': b'\x34', 'h': b'\x33',
+    'i': b'\x43', 'j': b'\x3B', 'k': b'\x42', 'l': b'\x4B', 'm': b'\x3A', 'n': b'\x31', 'o': b'\x44', 'p': b'\x4D',
+    'q': b'\x15', 'r': b'\x2D', 's': b'\x1B', 't': b'\x2C', 'u': b'\x3C', 'v': b'\x2A', 'w': b'\x1D', 'x': b'\x22',
+    'y': b'\x35', 'z': b'\x1A', '0': b'\x45', '1': b'\x16', '2': b'\x1E', '3': b'\x26', '4': b'\x25', '5': b'\x2E',
+    '6': b'\x36', '7': b'\x3D', '8': b'\x3E', '9': b'\x46', 'space': b'\x29', 'enter': b'\x5A', 'caps': b'\x12',
+    'sym': b'\x59', 'right': b'\xE0\x74', 'left': b'\xE0\x6B', 'down': b'\xE0\x72', 'up': b'\xE0\x75',
+    'altgr': b'\xE0\x11', 'esc': b'\x76',
+}
+
+
+def ps2_changes(before: set[str], after: set[str]) -> bytes:
+    """Скан-коды смены нажатых клавиш PS/2: сначала отпускания, затем нажатия, в порядке PS2_CODES."""
+    out = bytearray()
+    for name, code in PS2_CODES.items():
+        if name in before and name not in after:
+            out += code[:-1] + b'\xF0' + code[-1:]
+    for name, code in PS2_CODES.items():
+        if name in after and name not in before:
+            out += code
+    return bytes(out)
+
+
 MOUSE_COUNTS = 3                 # отсчётов счётчика мыши на чтение при нажатой псевдоклавише движения
 JOY_KEYS = ('joy_right', 'joy_left', 'joy_down', 'joy_up', 'joy_fire', 'joy_force', '', 'joy_start')
 # Биты 0…4 порта #1F — как у обычного Kempston; бит 5 — вторая кнопка джойстика (отделение и возврат
@@ -77,7 +106,7 @@ class Ft812Model:
         self.keys: set[str] = set()
         self.kempston = 0
         self.ps2_queue = bytearray()     # скан-коды PS/2 очереди Mr.Gluk
-        self.altgr_down = False          # правый Alt уже передан нажатым
+        self.ps2_down: set[str] = set()  # клавиши PS/2, уже переданные нажатыми
         self.mouse_x = 0                 # счётчики Kempston-мыши (8 бит)
         self.mouse_y = 0
         self.handles = {handle: {'source': 0, 'format': 0, 'stride': 0, 'height': 0, 'width_px': 0, 'height_px': 0,
@@ -138,10 +167,10 @@ class Ft812Model:
             # «joy_up» (3), «joy_fire» (4), «joy_force» (5), «joy_start» (7); 1 — нажата.
             return self.kempston | sum(1 << bit for bit, name in enumerate(JOY_KEYS) if name in self.keys)
         if address == 0xBFF7:
-            pressed = 'altgr' in self.keys
-            if pressed != self.altgr_down:
-                self.ps2_queue += b'\xE0\x11' if pressed else b'\xE0\xF0\x11'
-                self.altgr_down = pressed
+            pressed = {name for name in self.keys if name in PS2_CODES}
+            if pressed != self.ps2_down:
+                self.ps2_queue += ps2_changes(self.ps2_down, pressed)
+                self.ps2_down = pressed
             return self.ps2_queue.pop(0) if self.ps2_queue else 0
         if address == 0xFADF:
             return (0xFF & ~(1 if 'lmb' in self.keys else 0) & ~(2 if 'rmb' in self.keys else 0) &

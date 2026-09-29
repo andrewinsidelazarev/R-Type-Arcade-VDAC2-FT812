@@ -166,13 +166,17 @@ def main() -> int:
     import p2c_runtime_app
     from p2c_entry_runtime import RuntimeApp
     from rtype_port.title import TitleAssets
-    from rtype_check import InputMirror, apply_mouse, schedule
+    from rtype_check import InputMirror, apply_mouse, install_keys_double, schedule
 
     class Port(p2c_runtime_app.MachinePort):
         def __init__(self) -> None:
             super().__init__()
             self.state = None
             self.mirror = None
+
+        def boot(self) -> None:
+            super().boot()
+            install_keys_double(self.machine, self.mirror)     # шаг клавиш ×2 (Esc), как у машины Z80
 
         def step(self, mask, start1, coin1, render) -> None:
             from v30z80.scenario import Scenario
@@ -181,6 +185,7 @@ def main() -> int:
             self.calls.append(('step', mask, 0, 0, None))
 
         def mouse(self) -> None:
+            self.game_frame = True                              # кадр игры игрока — экран «игра» для Esc
             dx, dy = self.mirror.mouse_dx, self.mirror.mouse_dy
             if dx or dy:
                 apply_mouse(self.machine, dx, dy)
@@ -214,7 +219,9 @@ def main() -> int:
                                        'joy_up', 'joy_right', 'joy_down', 'joy_left'], rng.randrange(0, 3)))
             keys |= held
         events, buttons = mirror.frame(keys)
+        port.game_frame = False
         app.frame(events, buttons, surface)
+        mirror.end_frame(any(call[0] == 'show' for call in port.calls), port.game_frame)   # экран кадра для Esc
         port.calls.clear()
         if frame % args.every or port.state is None or port.state.video_off:
             continue

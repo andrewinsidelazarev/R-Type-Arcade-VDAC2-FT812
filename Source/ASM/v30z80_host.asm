@@ -5655,7 +5655,7 @@ FrameEmit:      ; прежний список ещё не показан — ж�
                 ld de,#0000                     ; DISPLAY: место оставлено пределом DL_LIMIT
                 call EmitRaw
                 call FtClose
-                call LabelCall                  ; VDAC2+: надпись скорости мыши — на место DISPLAY (vdac2p_label.asm)
+                call LabelCall                  ; VDAC2+: надпись скорости мыши и клавиш — на место DISPLAY (vdac2p_label.asm)
                 ld a,1
                 ld (VIDEO_SHOWN),a
                 call VisibilityUpdate

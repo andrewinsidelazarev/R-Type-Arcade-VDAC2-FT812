@@ -44,8 +44,8 @@ SOUND_ENTRY_RESET:                      ; #C006: сброс сессии (воз
                 jp SoundReset
 SOUND_ENTRY_PRELOAD:                    ; #C009: шаг предзагрузки звука загрузчиком SPG (вызов машины 10)
                 jp SoundPreload
-SOUND_ENTRY_LABEL:                      ; #C00C: надпись скорости мыши (vdac2p_label.asm; из FrameEmit хоста)
-                jp MouseLabel
+SOUND_ENTRY_LABEL:                      ; #C00C: надписи скорости мыши и клавиш (vdac2p_label.asm; из FrameEmit хоста)
+                jp SpeedLabel
 
                 INCLUDE "rtype_sound.inc"
                 INCLUDE "rtype_gs.inc"

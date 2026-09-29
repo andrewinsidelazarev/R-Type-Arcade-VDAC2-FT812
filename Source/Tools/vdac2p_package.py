@@ -28,10 +28,13 @@ sys.stdout.reconfigure(encoding='utf-8')
 (STAGE / 'Emulator' / 'rom').mkdir(parents=True, exist_ok=True)   # набор файлов постоянный — перезапись на месте
 (STAGE / 'SD card').mkdir(exist_ok=True)
 
-# эмулятор: только то, что нужно для запуска
-for name in ('Unreal_tsfm.exe', 'bt8xxemu.dll', 'bass.dll', 'bpx.ini', 'CMOS', 'NVRAM'):
+# эмулятор: только то, что нужно для запуска. Без красных строк в консоли Unreal (просьба пользователя 29.09.2026:
+# «ошибки в ini эмулятора исправь»): sos.l — метки ПЗУ отладчика (имя зашито в config.cpp), boot.$b — [AUTOLOAD] diskA
+# и [BETA128] BOOT, ПЗУ MoonSound грузится всегда (config.cpp), хотя сам MoonSound в ini выключен; образ жёсткого
+# диска [HDD] Image0 (wc.img, 100 МБ) не берётся — строка пустая.
+for name in ('Unreal_tsfm.exe', 'bt8xxemu.dll', 'bass.dll', 'bpx.ini', 'CMOS', 'NVRAM', 'sos.l', 'boot.$b'):
     shutil.copy2(UNREAL / name, STAGE / 'Emulator' / name)
-for name in ('zxevo.rom', 'bootGS.rom'):
+for name in ('zxevo.rom', 'bootGS.rom', 'YRW801-M - Yamaha - 1993.rom'):
     shutil.copy2(UNREAL / 'rom' / name, STAGE / 'Emulator' / 'rom' / name)
 shutil.copytree(UNREAL / 'doc', STAGE / 'Emulator' / 'doc', dirs_exist_ok=True)
 ini = (UNREAL / 'Unreal_tsfm.ini').read_bytes().decode('latin1')
@@ -39,6 +42,16 @@ lines = ini.split('\n')
 sd_lines = [index for index, line in enumerate(lines) if line.startswith('SDCARD=')]
 assert len(sd_lines) == 1, 'в ini эмулятора одна строка SDCARD='
 lines[sd_lines[0]] = 'SDCARD=rtype_sd.img' + ('\r' if lines[sd_lines[0]].endswith('\r') else '')
+section = ''
+for index, line in enumerate(lines):
+    if line.startswith('['):
+        section = line.strip()
+    if section == '[SOUND]' and line.startswith('MoonSound=1'):
+        lines[index] = 'MoonSound=0' + line[len('MoonSound=1'):]
+    elif section == '[HDD]' and line.startswith('Image0='):
+        lines[index] = 'Image0=' + ('\r' if line.endswith('\r') else '')
+assert any(line.startswith('mon.maxspeed=') for line in lines), \
+    'в Unreal_tsfm.ini нет клавиши mon.maxspeed — переустановить E:/zx/unreal-tsfm/install.py'
 (STAGE / 'Emulator' / 'Unreal_tsfm.ini').write_bytes('\n'.join(lines).encode('latin1'))
 shutil.copy2(ROOT / 'Build' / 'V30Z80' / 'rtype_sd.img', STAGE / 'Emulator' / 'rtype_sd.img')
 shutil.copy2(SD / 'rtype_vdac2.spg', STAGE / 'Emulator' / 'rtype_vdac2.spg')
@@ -97,6 +110,10 @@ rtype_vdac2.spg. Загрузчик находит паки на карте по
 Force     — правая кнопка мыши, правый Alt (AltGr) или вторая кнопка джойстика.
 Мышь      — средняя кнопка переключает скорость 1x / 0,5x; около трёх секунд в правом
             нижнем углу видна надпись "Mouse speed".
+Esc       — в игре шаг корабля с клавиатуры и джойстика 1x / 2x; около трёх секунд в
+            правом нижнем углу видна надпись "Keys / joystick speed". На титуле Esc
+            переключает кадровую частоту 59 Гц (по умолчанию) / 55 Гц, как у автомата, —
+            надпись "VSync" слева внизу; при 55 Гц игра и музыка идут в темпе автомата.
 
 
 Звук

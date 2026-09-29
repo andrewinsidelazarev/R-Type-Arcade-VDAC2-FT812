@@ -34,26 +34,27 @@ from p2c_z80_check import TSConfModel  # noqa: E402
 
 MACHINE = ROOT / 'Build' / 'V30Z80'
 P2C = ROOT / 'Build' / 'P2cRuntime'
-ROWS = (('caps', 'z', 'x', 'c', 'v'), ('a', 's', 'd', 'f', 'g'), ('q', 'w', 'e', 'r', 't'), ('1', '2', '3', '4', '5'),
-        ('0', '9', '8', '7', '6'), ('p', 'o', 'i', 'u', 'y'), ('enter', 'l', 'k', 'j', 'h'),
-        ('space', 'sym', 'm', 'n', 'b'))
 
 
 class InputMirror:
-    """Зеркало p2c_z80_runtime_cold.c: события кадра и кнопки игры из нажатых клавиш ZX, правого Alt («altgr»),
-    кнопок мыши («lmb», «rmb», «mmb»); движение мыши («mouse_right», «mouse_left», «mouse_down», «mouse_up» —
-    MOUSE_COUNTS отсчётов за кадр, как у модели v30z80_ft812) — смещение кадра mouse_dx / mouse_dy (вправо и вверх —
-    плюс) для вызова машины 9; средняя кнопка по фронту нажатия переключает чувствительность 1 ↔ 1/2 (при 1/2 смещение
-    делится пополам с переносом остатка оси, как p2c_rt_mouse_scale)."""
+    """Зеркало p2c_z80_runtime_cold.c: события кадра и кнопки игры из нажатых клавиш PS/2 (v30z80_ft812.PS2_CODES:
+    клавиши ZX по именам, стрелки «right», «left», «down», «up», правый Alt «altgr» — игра с 28.09.2026 берёт клавиши
+    только из очереди скан-кодов AVR, p2c_ft_keyboard), кнопок мыши («lmb», «rmb», «mmb»); движение мыши
+    («mouse_right», «mouse_left», «mouse_down», «mouse_up» — MOUSE_COUNTS отсчётов за кадр, как у модели v30z80_ft812) —
+    смещение кадра mouse_dx / mouse_dy (вправо и вверх — плюс) для вызова машины 9; средняя кнопка по фронту нажатия
+    переключает чувствительность 1 ↔ 1/2 (при 1/2 смещение делится пополам с переносом остатка оси, как
+    p2c_rt_mouse_scale). Нажатие Esc («esc», p2c_kb_esc) — по экрану прошлого кадра screen (p2c_rt_screen, его
+    ставит end_frame): на титуле переключает развёртку 59 ↔ 55 Гц (vsync55: у машины и эталона следов нет, только
+    регистр FT812 и надпись титула), в игре — шаг R-9 от клавиш и джойстика ×1 ↔ ×2 (keys_double, p2c_rt_keys_double;
+    эталону его прибавляют ловушки install_keys_double), в демо — только пробуждение."""
 
     MOUSE_JUMP = 63
 
     def __init__(self) -> None:
-        self.previous = [0] * 8
+        self.ps2_previous: set[str] = set()        # клавиши PS/2 прошлого кадра
         self.fire_previous = False
         self.force_previous = False
         self.start_previous = False                # восьмая кнопка Kempston прошлого кадра
-        self.altgr_previous = False
         self.blocked = 0
         self.mouse_ready = False
         self.mouse_dx = 0
@@ -61,15 +62,20 @@ class InputMirror:
         self.mouse_half = False
         self.mmb_previous = False
         self.mouse_rest = [0, 0]
+        self.keys_double = False                   # шаг клавиш и джойстика ×2 (Esc в игре)
+        self.vsync55 = False                       # развёртка 55 Гц (Esc на титуле)
+        self.screen = 0                            # экран прошлого кадра: 0 — титул, 1 — демо, 2 — игра
 
     def frame(self, keys: set[str]):
         from p2c_entry_runtime import FrameEvents, GameButtons
-        from v30z80_ft812 import MOUSE_COUNTS
-        rows = [sum(1 << bit for bit, name in enumerate(row) if name in keys) for row in ROWS]
-        altgr = 'altgr' in keys
-        wake = any(rows[index] & ~self.previous[index] for index in range(8))
-        if altgr and not self.altgr_previous:
-            wake = True
+        from v30z80_ft812 import MOUSE_COUNTS, PS2_CODES
+        ps2 = {name for name in keys if name in PS2_CODES}
+        wake = bool(ps2 - self.ps2_previous)       # нажата клавиша PS/2 (p2c_kb_wake)
+        if 'esc' in ps2 and 'esc' not in self.ps2_previous:   # нажатие Esc (p2c_kb_esc)
+            if self.screen == 0:
+                self.vsync55 = not self.vsync55
+            elif self.screen == 2:
+                self.keys_double = not self.keys_double
         mmb = 'mmb' in keys
         if mmb and not self.mmb_previous:
             self.mouse_half = not self.mouse_half
@@ -87,20 +93,19 @@ class InputMirror:
                     self.mouse_rest[axis] = total & 1
             self.mouse_dx, self.mouse_dy = deltas
         self.mouse_ready = True
-        caps = bool(rows[0] & 1)
-        fire = bool(rows[7] & 1 or rows[6] & 1 or 'lmb' in keys or 'joy_fire' in keys)   # Space, Enter, ЛКМ, Kempston
-        force = bool(altgr or 'rmb' in keys or 'joy_force' in keys)   # правый Alt, ПКМ, бит 5 Kempston
+        fire = bool({'space', 'enter', 'lmb', 'joy_fire'} & keys)     # Space, Enter, ЛКМ, Kempston
+        force = bool({'altgr', 'rmb', 'joy_force'} & keys)             # правый Alt, ПКМ, бит 5 Kempston
         start = 'joy_start' in keys                 # бит 7 Kempston — только старт игры
         if fire and not self.fire_previous:
             wake = True
         bits = 0
-        if rows[5] & 1 or (caps and rows[4] & 4) or 'joy_right' in keys:
+        if {'right', 'p', 'joy_right'} & keys:     # стрелки и P O A Q — как p2c_kb_moves
             bits |= 1
-        if rows[5] & 2 or (caps and rows[3] & 16) or 'joy_left' in keys:
+        if {'left', 'o', 'joy_left'} & keys:
             bits |= 2
-        if rows[1] & 1 or (caps and rows[4] & 16) or 'joy_down' in keys:
+        if {'down', 'a', 'joy_down'} & keys:
             bits |= 4
-        if rows[2] & 1 or (caps and rows[4] & 8) or 'joy_up' in keys:
+        if {'up', 'q', 'joy_up'} & keys:
             bits |= 8
         held =(16 if fire else 0) | (32 if force else 0)
         self.blocked &= held
@@ -117,15 +122,19 @@ class InputMirror:
                              demo_wake=wake)
         buttons = GameButtons(right=bool(bits & 1), left=bool(bits & 2), down=bool(bits & 4), up=bool(bits & 8),
                               fire=bool(bits & 16), force=bool(bits & 32))
-        self.previous = rows
+        self.ps2_previous = ps2
         self.fire_previous = fire
         self.force_previous = force
         self.start_previous = start
-        self.altgr_previous = altgr
         return events, buttons
 
     def clear(self) -> None:
         self.blocked = 48
+
+    def end_frame(self, shown: bool, game: bool) -> None:
+        """Экран кадра для Esc следующего (p2c_rt_frame_end): кадр не показывала машина — показан список титула (0);
+        показала — с ходом игрока (MachinePort.mouse) игра (2), без него демо (1)."""
+        self.screen = (2 if game else 1) if shown else 0
 
 
 # Оси R-9 для мыши (ApiMouse, v30z80_runtime.asm): адрес дробного байта позиции 24 бита Q8, пикселей M72 на отсчёт
@@ -417,6 +426,32 @@ def apply_mouse(machine, dx: int, dy: int) -> None:
         position = (int.from_bytes(bytes(cpu.mem_read(address, 3)), 'little') + counts * scale) & 0xFFFFFF
         integer = min(max(position >> 8, low), high)
         cpu.mem_write(address, ((integer << 8) | (position & 0xFF)).to_bytes(3, 'little'))
+
+
+# Шаг R-9 от клавиш и джойстика ×2 (Esc, n2.NKeys2x): точки обработчика $2027 сразу после вызовов $0672 и $0689
+# (линейные адреса IP $2102 и $2109 при CS = $0040) и смещение 24-битной координаты Q8 от BP (X — [bp+3], Y — [bp+7]).
+KEYS_DOUBLE_POINTS = ((0x02502, 3), (0x02509, 7))
+ATTRACT_DEMO_HANDLER = b'\x8B\x0A'       # обработчик директора [DS:0] = $0A8B — демо аттракта: ROM ведёт корабль записью
+
+
+def install_keys_double(machine, mirror) -> None:
+    """Зеркало n2.NKeys2x на эталоне: при шаге клавиш ×2 (mirror.keys_double) тот же шаг AX ещё раз прибавляется к
+    координате — повторный $0672 / $0689 перед рамками поля; кроме демо аттракта и автопилота [$2FC1] (у Z80 он идёт
+    переводом, без удвоения)."""
+    from unicorn.unicorn_const import UC_HOOK_CODE
+    from unicorn.x86_const import UC_X86_REG_AX, UC_X86_REG_BP, UC_X86_REG_SS
+
+    def hook(uc, _address, _size, offset) -> None:
+        if not mirror.keys_double or bytes(uc.mem_read(0x40000, 2)) == ATTRACT_DEMO_HANDLER or \
+                uc.mem_read(0x42FC1, 1)[0]:
+            return
+        step = uc.reg_read(UC_X86_REG_AX)
+        at = (uc.reg_read(UC_X86_REG_SS) << 4) + ((uc.reg_read(UC_X86_REG_BP) + offset) & 0xFFFF)
+        value = int.from_bytes(bytes(uc.mem_read(at, 3)), 'little') + step - ((step & 0x8000) << 1)
+        uc.mem_write(at, (value & 0xFFFFFF).to_bytes(3, 'little'))
+
+    for address, offset in KEYS_DOUBLE_POINTS:
+        machine.cpu.hook_add(UC_HOOK_CODE, hook, offset, address, address)
 
 
 def schedule(frame: int, script: list[tuple[int, int, str]]) -> set[str]:
@@ -839,10 +874,13 @@ def main() -> int:
             super().__init__()
             self.state = None
             self.mirror = None
+            self.game_frame = False                # в кадре был ход игрока (mouse) — экран «игра» для Esc
 
         def boot(self) -> None:
             from v30z80 import snapshot as machine_snapshot
             self.machine = machine_snapshot.new_reference_machine(self.sound_command)
+            if self.mirror is not None:
+                install_keys_double(self.machine, self.mirror)
             self.calls.append(('boot', 0, 0, 0, None))
 
         @staticmethod
@@ -869,7 +907,8 @@ def main() -> int:
                 self.mirror.clear()
 
         def mouse(self) -> None:
-            # Вызов машины 9 — только при движении мыши кадра (p2c_port_mouse).
+            # Вызов машины 9 — только при движении мыши кадра (p2c_port_mouse); сам вызов метода — кадр игры игрока.
+            self.game_frame = True
             dx, dy = self.mirror.mouse_dx, self.mirror.mouse_dy
             if dx or dy:
                 apply_mouse(self.machine, dx, dy)
@@ -1101,12 +1140,14 @@ def main() -> int:
                         print(f'кадр {frame}: список FT812 или RAM_G отличаются от прежней сборки')
                         return 1
         events, buttons = mirror.frame(keys)
+        port.game_frame = False
         app.frame(events, buttons, surface)
         tsfm.step_frame()
         py_calls = pending + [list(call) for call in port.calls]
         pending = []
         port.calls.clear()
         shown = any(call[0] == 'show' for call in py_calls)
+        mirror.end_frame(shown, port.game_frame)
         # Записи портов эталона: выбор чипа, регистр, значение.
         if len(tsfm_ports) % 3 or any(port_value[0] != (0xFFFD, 0xFFFD, 0xBFFD)[index % 3]
                                       for index, port_value in enumerate(tsfm_ports)):

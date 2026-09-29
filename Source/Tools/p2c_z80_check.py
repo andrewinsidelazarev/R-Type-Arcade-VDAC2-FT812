@@ -245,6 +245,11 @@ def main() -> int:
         # Клавиатура ZX в модели: полуряды портов #xxFE, нажатая клавиша — нулевой бит.
         key_ports = {'O': (0xDF, 1), 'P': (0xDF, 0), 'Q': (0xFB, 0), 'A': (0xFD, 0), 'SPACE': (0x7F, 0),
                      'N': (0x7F, 3)}
+        # Те же клавиши — скан-кодами PS/2 в очереди Mr.Gluk (#BFF7): ввод адаптера с 28.09.2026 читает клавиатуру
+        # только оттуда (p2c_ft_keyboard), смена нажатия — код нажатия или F0 и код.
+        from v30z80_ft812 import PS2_CODES, ps2_changes
+        ps2_names = {'O': 'o', 'P': 'p', 'Q': 'q', 'A': 'a', 'SPACE': 'space', 'N': 'n'}
+        ps2_state = {'down': set(), 'queue': bytearray()}
         chained_input = ft.input
 
         def keyboard_input(address: int) -> int:
@@ -255,6 +260,12 @@ def main() -> int:
                     if (address >> 8) == row:
                         value &= ~(1 << bit) & 0xFF
                 return value
+            if address == 0xBFF7:
+                pressed = {ps2_names[key] for key in keys_down if ps2_names.get(key) in PS2_CODES}
+                if pressed != ps2_state['down']:
+                    ps2_state['queue'] += ps2_changes(ps2_state['down'], pressed)
+                    ps2_state['down'] = pressed
+                return ps2_state['queue'].pop(0) if ps2_state['queue'] else 0
             return chained_input(address)
         model.cpu.set_input_callback(keyboard_input)
 

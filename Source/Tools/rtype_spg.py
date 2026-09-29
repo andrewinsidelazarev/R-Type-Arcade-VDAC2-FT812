@@ -84,10 +84,12 @@ def main() -> int:
     overlap = (set(machine_pages) & set(p2c_pages)) | ({SWITCH_PAGE, BOOT_PAGE} & (set(machine_pages) | set(p2c_pages)))
     if overlap:
         raise SystemExit(f'страницы частей пересекаются: {sorted(hex(page) for page in overlap)}')
-    # Кэш секторов загрузчика (страницы только времени работы, rtype_loader.py) — вне SPG, загрузчика SPG и всех банков
-    # кода p2c #49…#4E (p2c_runtime_z80.BANK_PAGES: заняты по мере роста кода, а не только нынешние).
+    # Кэш секторов загрузчика (страницы только времени работы, rtype_loader.py) — вне SPG, загрузчика SPG и банков кода
+    # p2c #49…#4D (p2c_runtime_z80.BANK_PAGES: заняты по мере роста кода, а не только нынешние). #4E с 28.09.2026 —
+    # страница кэша (замена #EF, отданной кольцу фона, чтобы #F7 — пути панелей Wild Commander — осталась нетронутой);
+    # если код p2c дорастёт до неё, пересечение поймает set(p2c_pages).
     cache_overlap = set(loader.get('cache_pages', [])) & (set(machine_pages) | set(p2c_pages) | {SWITCH_PAGE, BOOT_PAGE} |
-                                                          set(range(0x49, 0x4F)))
+                                                          set(range(0x49, 0x4E)))
     if cache_overlap:
         raise SystemExit(f'страницы кэша секторов заняты частями SPG: {sorted(hex(page) for page in cache_overlap)}')
 

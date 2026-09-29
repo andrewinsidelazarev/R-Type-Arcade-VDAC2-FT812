@@ -39,8 +39,8 @@ Host2Check:     ld a,(DATA_STATUS)
                 jp Map1
 .hl:            jp (hl)
 
-; Надпись скорости мыши (vdac2p_label.asm — в звуковой странице: в страницах хоста места нет) из FrameEmit хоста. На
-; выходе, как у Host2Check, W3 — страница хоста, W1 — страница состояния. Портит всё.
+; Надписи скорости мыши и клавиш (vdac2p_label.asm — в звуковой странице: в страницах хоста места нет) из FrameEmit
+; хоста. На выходе, как у Host2Check, W3 — страница хоста, W1 — страница состояния. Портит всё.
 LabelCall:      call MapSound
                 call SOUND_ENTRY_LABEL
                 jr Host2Check.back

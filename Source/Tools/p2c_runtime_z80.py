@@ -159,10 +159,13 @@ def main() -> int:
                   'const uint8_t p2c_z80_typed_banks[32] = { 0 };\n'
                   'const uint8_t p2c_page_map[256] = { ' + ', '.join(map(str, map_values)) + ' };\n' + catalog_tables)
     compile_ = p2c_z80.sdcc_compile
+    # Диагностические ветки цикла оболочки (ifdef в p2c_z80_runtime.c) — переменной среды P2C_DEFINES: имена через
+    # запятую, например P2C_VSYNC_TEST (как RTYPE_ASM_DEFINES у машины). В обычной сборке переменной нет.
+    diagnostics = tuple(name.strip() for name in os.environ.get('P2C_DEFINES', '').split(',') if name.strip())
     resident = [
         compile_(C_DIR / 'p2c_runtime.c', BUILD / 'runtime_hot.rel', None, ('P2C_SPLIT_HOT',), '--opt-code-size'),
         compile_(C_DIR / 'z80' / 'p2c_z80.c', BUILD / 'z80_hot.rel', None, ('P2C_SPLIT_HOT',), '--opt-code-size'),
-        compile_(C_DIR / 'z80' / 'p2c_z80_runtime.c', BUILD / 'z80_runtime.rel', None, (), '--opt-code-size'),
+        compile_(C_DIR / 'z80' / 'p2c_z80_runtime.c', BUILD / 'z80_runtime.rel', None, diagnostics, '--opt-code-size'),
         compile_(C_DIR / 'z80' / 'p2c_z80_ft812.c', BUILD / 'adapter.rel', None, ('P2C_BLIT_ASM',), '--opt-code-size'),
         compile_(tables_c, BUILD / 'tables.rel', None, (), '--opt-code-size'),
     ]

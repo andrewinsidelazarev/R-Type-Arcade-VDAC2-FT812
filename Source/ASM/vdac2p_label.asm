@@ -1,9 +1,13 @@
-; VDAC2+: надпись скорости мыши — «Mouse speed: 1x» или «Mouse speed: 0,5x» в правом нижнем углу, около трёх секунд
-; после переключения. Отступление от оригинала по решению пользователя 2026-09-27: «Нужно немного отступить от
-; оригинала: в игре в правом нижнем углу писать (например ROM шрифтом) Mouse speed: 1x или 0,5x», «пусть надпись
-; держится не всё время, а около трёх секунд после переключения скорости мыши». У аркады мыши нет: чувствительность
-; (1 ↔ 1/2) переключает средняя кнопка Kempston Mouse в оболочке p2c (p2c_z80_runtime_cold.c), машине она приходит
-; битом 2 флагов шага (API_FLAGS резидента, p2c_port_step).
+; VDAC2+: надписи скорости в правом нижнем углу, около трёх секунд после переключения — «Mouse speed: 1x» или «Mouse
+; speed: 0,5x» (мышь) и «Keys / joystick speed: 1x» или «Keys / joystick speed: 2x» (клавиши и Kempston-джойстик).
+; Отступления от оригинала по решениям пользователя: 2026-09-27 — «Нужно немного отступить от оригинала: в игре в правом
+; нижнем углу писать (например ROM шрифтом) Mouse speed: 1x или 0,5x», «пусть надпись держится не всё время, а около
+; трёх секунд после переключения скорости мыши»; 2026-09-29 — «При нажатии ESC корабль сдвигается с шагом в 2 больше с
+; клавиатуры или Kempston Joystick. Повторное нажатие клавиши ESC возвращает обычное поведение клавиатуры и джойстика.
+; На то же время что и для мыши в правом нижнем углу надпись Keys / joystick speed 2x (1x)». У аркады ни мыши, ни этих
+; скоростей нет: чувствительность мыши (1 ↔ 1/2) переключает средняя кнопка Kempston Mouse, шаг клавиш и джойстика
+; (×1 ↔ ×2) — Esc, оба — в оболочке p2c (p2c_z80_runtime_cold.c); машине они приходят битами 2 и 3 флагов шага (API_FLAGS
+; резидента, p2c_port_step). Место одно: показывается надпись последнего переключения.
 ;
 ; Модуль — в свободной части звуковой страницы (SOUND_PAGE, окно W3 на время вызова): в страницах хоста места нет.
 ; Вход SOUND_ENTRY_LABEL — из FrameEmit хоста (переходник LabelCall резидента) после DISPLAY кадра: слова надписи
@@ -16,15 +20,18 @@
 ; в #2FFFFC, блок шрифта — 148 байт с номера 16). Знак — одно слово VERTEX2II (handle и знак в самом слове) со
 ; сдвигом VERTEX_TRANSLATE: у VERTEX2II координаты до 511. Матрица — единичная, ставится целиком (глифы шрифта —
 ; битмап: под матрицей масштаба кадра они рвутся), ножницы — весь экран. Слова собираются при переключении (MlBuild),
-; в кадре — только запись в SPI. Цена строки FT812 — такт на слово на каждой строке: надпись — 27…29 слов, тени нет
-; (панель под надписью чёрная), чтобы худшая строка игры (1247 тактов, этап 5) осталась ниже потолка ~1300.
+; в кадре — только запись в SPI. Цена строки FT812 — такт на слово на каждой строке: надпись — 12 слов состояния и по
+; слову на знак; пробел — только сдвиг (знак пустой), тени нет (панель под надписью чёрная). Самая длинная — 33 слова
+; («Keys / joystick speed: 2x»), мыши — 25…27: худшая строка игры (1247 тактов, этап 5) остаётся ниже потолка ~1300.
 
 ML_FONT         EQU 28                          ; ПЗУ-шрифт FT812 (handle 16…31 — шрифты ПЗУ с включения)
 ML_RIGHT        EQU 1024-16                     ; правый край надписи, физические пиксели 1024×768
 ML_TOP          EQU 730                         ; верх строки шрифта: низ знаков — на уровне нижней строки панели
                 ifdef RTYPE_LABEL_TEST
 ; Диагностика (в релизный SPG не входит): надпись с первого кадра вывода машины и надолго — проверка шрифта и места в
-; Unreal без средней кнопки мыши; с RTYPE_LABEL_HALF бит скорости читается наоборот — строка «0,5x».
+; Unreal без средней кнопки мыши и без Esc; с RTYPE_LABEL_HALF бит мыши читается наоборот — строка «0,5x»; с
+; RTYPE_LABEL_KEYS — надпись клавиш, их бит читается наоборот — строка «Keys / joystick speed: 2x» (удвоение шага
+; машина берёт из API_FLAGS как есть).
 ML_FRAMES       EQU 30000
                 else
 ML_FRAMES       EQU 177                         ; показ — ≈3 с кадров развёртки FT812 (59,08 Гц)
@@ -32,6 +39,7 @@ ML_FRAMES       EQU 177                         ; показ — ≈3 с кад�
 ML_DX           EQU 512                         ; начало координат VERTEX2II (VERTEX_TRANSLATE)
 ML_DY           EQU 256
 ML_HALF_BIT     EQU 4                           ; бит флагов шага: чувствительность мыши 1/2
+ML_KEYS_BIT     EQU API_KEYS2X                  ; бит флагов шага: шаг R-9 от клавиш и джойстика ×2
 ML_ROM_FONTS    EQU #2FFFFC                     ; указатель таблицы шрифтов ПЗУ FT812
 ML_Y            EQU ML_TOP-ML_DY                ; y знаков в координатах VERTEX2II
                 ASSERT ML_Y >= 0 && ML_Y < 512 && ML_RIGHT-ML_DX < 512
@@ -42,17 +50,37 @@ ML_BYTE2        EQU (ML_Y>>4)&#1F
                 ASSERT (ML_FONT&1) == 0                 ; младший бит handle — бит 7 байта 0: у знаков ASCII он 0
 
 ; --- кадр ---------------------------------------------------------------------------------------------------------------
-; Переключение (бит флагов не как в прошлом кадре вывода) — слова новой надписи и показ до ML_UNTIL. Показ идёт —
-; слова в RAM_DL за DL_LAST. Портит всё, окно W2.
-MouseLabel:     ld a,(API_FLAGS)
-                and ML_HALF_BIT
+; Переключение (биты скорости флагов не как в прошлом кадре вывода) — слова надписи переключённой скорости (обе сразу —
+; надпись клавиш) и показ до ML_UNTIL. Показ идёт — слова в RAM_DL за DL_LAST. Портит всё, окно W2.
+SpeedLabel:     ld a,(API_FLAGS)
+                and ML_HALF_BIT|ML_KEYS_BIT
                 ifdef RTYPE_LABEL_HALF
                 xor ML_HALF_BIT
                 endif
-                ld hl,ML_HALF
-                cp (hl)
+                ifdef RTYPE_LABEL_KEYS
+                xor ML_KEYS_BIT
+                endif
+                ld hl,ML_STATE
+                ld c,(hl)
+                cp c
                 jr z,.same
                 ld (hl),a
+                ld b,a                          ; B — новые биты
+                xor c                           ; A — переключённые биты
+                and ML_KEYS_BIT
+                jr z,.mouse
+                ld hl,ML_TEXT_KEYS_1X           ; переключены клавиши
+                ld a,b
+                and ML_KEYS_BIT
+                jr z,.text
+                ld hl,ML_TEXT_KEYS_2X
+                jr .text
+.mouse:         ld hl,ML_TEXT_1X                ; переключена мышь
+                ld a,b
+                and ML_HALF_BIT
+                jr z,.text
+                ld hl,ML_TEXT_HALF
+.text:          ld (ML_TEXT),hl
                 call MlBuild
                 call MlFrames
                 ld de,ML_FRAMES
@@ -106,8 +134,9 @@ MouseLabel:     ld a,(API_FLAGS)
                 ret
 
 ; --- слова надписи ------------------------------------------------------------------------------------------------------
-; Для скорости ML_HALF: ширины знаков шрифта ML_FONT из ПЗУ FT812, строка выравнивается по правому краю ML_RIGHT; слова
-; ML_HEAD и по слову VERTEX2II на знак → ML_WORDS, их байт — ML_BYTES. Портит всё.
+; Для строки ML_TEXT: ширины знаков шрифта ML_FONT из ПЗУ FT812, строка выравнивается по правому краю ML_RIGHT; слова
+; ML_HEAD и по слову VERTEX2II на знак, кроме пробела (знак пустой — только сдвиг x) → ML_WORDS, их байт — ML_BYTES.
+; Портит всё.
 MlBuild:        ld a,ML_ROM_FONTS >> 16
                 ld de,ML_ROM_FONTS & #FFFF
                 ld hl,ML_WIDTHS
@@ -122,12 +151,7 @@ MlBuild:        ld a,ML_ROM_FONTS >> 16
                 ld hl,ML_WIDTHS
                 ld b,128
                 call MlRead                     ; ширины знаков 0…127
-                ld hl,ML_TEXT_1X
-                ld a,(ML_HALF)
-                or a
-                jr z,.text
-                ld hl,ML_TEXT_HALF
-.text:          ld (ML_TEXT),hl
+                ld hl,(ML_TEXT)
                 ld bc,0                         ; BC — ширина строки
 .width:         ld a,(hl)
                 or a
@@ -153,6 +177,8 @@ MlBuild:        ld a,ML_ROM_FONTS >> 16
                 or a
                 jr z,.done
                 inc bc
+                cp ' '
+                jr z,.advance                   ; пробел: слова нет, только сдвиг x (A — его код)
                 ld (de),a                       ; байт 0: знак
                 inc de
                 push af
@@ -177,7 +203,7 @@ MlBuild:        ld a,ML_ROM_FONTS >> 16
                 ld (de),a                       ; байт 3: 2 << 6 | биты 3…8 x
                 inc de
                 pop af
-                push de
+.advance:       push de
                 call MlWidth
                 ld e,a
                 ld d,0
@@ -256,12 +282,26 @@ ML_HEAD:        DD #2B000000|(ML_DX*16)         ; VERTEX_TRANSLATE_X (1/16 пи�
 ML_HEAD_END:
 ML_TEXT_1X:     DB "Mouse speed: 1x",0
 ML_TEXT_HALF:   DB "Mouse speed: 0,5x",0
-ML_MAX_BYTES    EQU ML_HEAD_END-ML_HEAD+4*17
+ML_TEXT_KEYS_1X: DB "Keys / joystick speed: 1x",0
+ML_TEXT_KEYS_2X: DB "Keys / joystick speed: 2x",0
+ML_MAX_GLYPHS   EQU 21                          ; знаков без пробелов в самой длинной строке («Keys / joystick speed: 2x»)
+ML_MAX_BYTES    EQU ML_HEAD_END-ML_HEAD+4*ML_MAX_GLYPHS
                 ASSERT ML_MAX_BYTES < 256               ; OTIR — до 255 байт
                 ifdef RTYPE_LABEL_TEST
-ML_HALF         DB #FF                          ; диагностика: «переключение» в первом кадре вывода
+; Диагностика: «переключение» в первом кадре вывода — бит мыши, с RTYPE_LABEL_KEYS — бит клавиш (ML_TEST_NOW — биты
+; первого кадра после инверсий).
+ML_TEST_NOW     = 0
+                ifdef RTYPE_LABEL_HALF
+ML_TEST_NOW     = ML_TEST_NOW|ML_HALF_BIT
+                endif
+                ifdef RTYPE_LABEL_KEYS
+ML_TEST_NOW     = ML_TEST_NOW|ML_KEYS_BIT
+ML_STATE        DB ML_TEST_NOW^ML_KEYS_BIT
                 else
-ML_HALF         DB 0                            ; бит скорости прошлого кадра вывода (при запуске — 1)
+ML_STATE        DB ML_TEST_NOW^ML_HALF_BIT
+                endif
+                else
+ML_STATE        DB 0                            ; биты скорости прошлого кадра вывода (при запуске — 1 и ×1)
                 endif
 ML_ON           DB 0                            ; надпись показывается
 ML_UNTIL        DW 0                            ; кадр развёртки конца показа (младшие 16 бит REG_FRAMES)
